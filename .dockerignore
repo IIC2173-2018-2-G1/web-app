@@ -1,0 +1,8 @@
+.prettierignore
+.prettierrc
+LICENSE
+node_modules/
+.vscode/
+.git/
+.next/
+README.md
