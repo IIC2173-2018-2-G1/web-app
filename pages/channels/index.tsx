@@ -1,8 +1,7 @@
 import React from "react"
 import { WithStyles, createStyles, withStyles } from "@material-ui/core/styles"
 import "isomorphic-fetch"
-// import SideBar from "../src/components/SideBar"
-import Layout from "../src/components/Layout"
+import Layout from "../../src/components/Layout"
 
 const styles = theme => createStyles({})
 

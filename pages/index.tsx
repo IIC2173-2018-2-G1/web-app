@@ -7,7 +7,11 @@ export interface MainPageState {}
 
 class MainPage extends React.Component<MainPageProps, MainPageState> {
   render() {
-    return <Layout />
+    return (
+      <Layout>
+        <h1>Index Page!</h1>
+      </Layout>
+    )
   }
 }
 

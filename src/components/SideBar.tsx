@@ -1,5 +1,6 @@
 import React from "react"
 import Link from "next/link"
+import Router from "next/router"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListSubheader from "@material-ui/core/ListSubheader"
@@ -79,7 +80,7 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
 
   handleUsernameClick = () => {
     if (!this.state.notificationTooltipOpen) {
-      console.log("user clicked!")
+      Router.push("/account")
     }
   }
 
@@ -125,25 +126,29 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
         <List className={classes.channelList}>
           <ListSubheader className={classes.listHeader}>
             <div className={classes.container}>
-              <Tooltip
-                title="Browse all channels"
-                TransitionComponent={Zoom}
-                placement="bottom-start"
-              >
-                <span className={classes.clickableText}>Channels</span>
-              </Tooltip>
-              <Tooltip title="Create a channel" TransitionComponent={Zoom}>
-                <IconButton
-                  className={classes.listButton}
-                  aria-label="CreateChannel"
+              <Link href="/channels/all">
+                <Tooltip
+                  title="Browse all channels"
+                  TransitionComponent={Zoom}
+                  placement="bottom-start"
                 >
-                  <AddCircleOutline />
-                </IconButton>
-              </Tooltip>
+                  <span className={classes.clickableText}>Channels</span>
+                </Tooltip>
+              </Link>
+              <Link href="/channels/create">
+                <Tooltip title="Create a channel" TransitionComponent={Zoom}>
+                  <IconButton
+                    className={classes.listButton}
+                    aria-label="CreateChannel"
+                  >
+                    <AddCircleOutline />
+                  </IconButton>
+                </Tooltip>
+              </Link>
             </div>
           </ListSubheader>
           {channelNames.map(channel => (
-            <Link href={`/channel?id=${channel.id}`} key={channel.id}>
+            <Link href={`/channels?id=${channel.id}`} key={channel.id}>
               <ListItem button>
                 <ListItemText secondary={channel.name} />
               </ListItem>
@@ -152,9 +157,11 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
         </List>
         <Divider />
         <ListSubheader>
-          <Tooltip title="Search for messages with hashtags">
-            <span className={classes.clickableText}>Hashtags</span>
-          </Tooltip>
+          <Link href="/hashtags">
+            <Tooltip title="Search for messages with hashtags">
+              <span className={classes.clickableText}>Hashtags</span>
+            </Tooltip>
+          </Link>
         </ListSubheader>
       </Drawer>
     )

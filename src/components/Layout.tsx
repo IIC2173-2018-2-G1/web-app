@@ -18,6 +18,8 @@ const styles = (theme: Theme) =>
     },
     content: {
       position: "relative",
+      height: "100%",
+      overflow: "hidden",
       padding: theme.spacing.unit * 3,
     },
   })
