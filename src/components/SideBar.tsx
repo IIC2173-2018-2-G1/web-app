@@ -1,4 +1,5 @@
 import React from "react"
+import Link from "next/link"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import ListSubheader from "@material-ui/core/ListSubheader"
@@ -19,7 +20,7 @@ const styles = theme =>
       position: "relative",
       whiteSpace: "nowrap",
       width: 240,
-      height: "100vh",
+      height: "100%",
     },
     listButton: {
       position: "absolute",
@@ -40,7 +41,8 @@ const styles = theme =>
       },
     },
     channelList: {
-      maxHeight: "40vh",
+      minHeight: 100,
+      maxHeight: "70%",
       overflow: "auto",
       backgroundColor: theme.palette.background.paper,
     },
@@ -56,17 +58,17 @@ export interface SideBarState {
   notificationTooltipOpen: boolean
 }
 
-const channelNames: string[] = [
-  "channel one",
-  "channel two",
-  "channel three",
-  "channel four",
-  "channel five",
-  "channel six",
-  "channel seven",
-  "channel eight",
-  "channel nine",
-  "channel ten",
+const channelNames: { name: string; id: number }[] = [
+  { name: "channel one", id: 1 },
+  { name: "channel two", id: 2 },
+  { name: "channel three", id: 3 },
+  { name: "channel four", id: 4 },
+  { name: "channel five", id: 5 },
+  { name: "channel six", id: 6 },
+  { name: "channel seven", id: 7 },
+  { name: "channel eight", id: 8 },
+  { name: "channel nine", id: 9 },
+  { name: "channel ten", id: 10 },
 ]
 
 class SideBar extends React.Component<SideBarProps, SideBarState> {
@@ -140,13 +142,20 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
               </Tooltip>
             </div>
           </ListSubheader>
-          {channelNames.map(name => (
-            <ListItem button key={name}>
-              <ListItemText secondary={name} />
-            </ListItem>
+          {channelNames.map(channel => (
+            <Link href={`/channel?id=${channel.id}`} key={channel.id}>
+              <ListItem button>
+                <ListItemText secondary={channel.name} />
+              </ListItem>
+            </Link>
           ))}
         </List>
         <Divider />
+        <ListSubheader>
+          <Tooltip title="Search for messages with hashtags">
+            <span className={classes.clickableText}>Hashtags</span>
+          </Tooltip>
+        </ListSubheader>
       </Drawer>
     )
   }
