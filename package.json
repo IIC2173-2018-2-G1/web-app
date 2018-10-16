@@ -27,8 +27,10 @@
     "@types/react-jss": "^8.6.0",
     "@zeit/next-typescript": "^1.1.1",
     "classnames": "^2.2.6",
+    "express": "^4.16.4",
     "isomorphic-fetch": "^2.2.1",
     "next": "^7.0.0",
+    "next-routes": "^1.4.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-jss": "^8.6.1"
@@ -37,6 +39,7 @@
     "@types/next": "^6.1.7",
     "@types/react": "^16.4.14",
     "@types/react-dom": "^16.0.7",
-    "@types/styled-jsx": "^2.2.5"
+    "@types/styled-jsx": "^2.2.5",
+    "nodemon": "^1.18.4"
   }
 }

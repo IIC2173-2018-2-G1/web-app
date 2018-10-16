@@ -1,4 +1,5 @@
 import React from "react"
+import Layout from "../src/components/Layout"
 import Avatar from "@material-ui/core/Avatar"
 import Button from "@material-ui/core/Button"
 import CssBaseline from "@material-ui/core/CssBaseline"
@@ -88,64 +89,68 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
     const { classes } = this.props
 
     return (
-      <React.Fragment>
-        <CssBaseline />
-        <main className={classes.layout}>
-          <Paper className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <LockIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <form className={classes.form} onSubmit={this.handleSubmit}>
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="email">Email Address</InputLabel>
-                <Input
-                  id="email"
-                  value={this.state.email}
-                  onChange={e => this.handleChangeEmail(e.target.value)}
-                  name="email"
-                  autoComplete="email"
-                  autoFocus
-                />
-              </FormControl>
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="password">Password</InputLabel>
-                <Input
-                  name="password"
-                  type="password"
-                  id="password"
-                  value={this.state.password}
-                  onChange={e => this.handleChangePass(e.target.value)}
-                  autoComplete="current-password"
-                />
-              </FormControl>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id="remember"
-                    value="remember"
-                    checked={this.state.remember}
-                    onChange={e => this.handleChangeRemember(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
+      <Layout noSideBar>
+        <React.Fragment>
+          <CssBaseline />
+          <main className={classes.layout}>
+            <Paper className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
                 Sign in
-              </Button>
-            </form>
-          </Paper>
-        </main>
-      </React.Fragment>
+              </Typography>
+              <form className={classes.form} onSubmit={this.handleSubmit}>
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="email">Email Address</InputLabel>
+                  <Input
+                    id="email"
+                    value={this.state.email}
+                    onChange={e => this.handleChangeEmail(e.target.value)}
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                  />
+                </FormControl>
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="password">Password</InputLabel>
+                  <Input
+                    name="password"
+                    type="password"
+                    id="password"
+                    value={this.state.password}
+                    onChange={e => this.handleChangePass(e.target.value)}
+                    autoComplete="current-password"
+                  />
+                </FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="remember"
+                      value="remember"
+                      checked={this.state.remember}
+                      onChange={e =>
+                        this.handleChangeRemember(e.target.checked)
+                      }
+                      color="primary"
+                    />
+                  }
+                  label="Remember me"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                >
+                  Sign in
+                </Button>
+              </form>
+            </Paper>
+          </main>
+        </React.Fragment>
+      </Layout>
     )
   }
 }

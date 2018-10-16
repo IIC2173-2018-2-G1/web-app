@@ -1,5 +1,5 @@
 import React from "react"
-import SideBar from "../src/components/SideBar"
+import Layout from "../src/components/Layout"
 
 export interface MainPageProps {}
 
@@ -8,9 +8,9 @@ export interface MainPageState {}
 class MainPage extends React.Component<MainPageProps, MainPageState> {
   render() {
     return (
-      <React.Fragment>
-        <SideBar />
-      </React.Fragment>
+      <Layout>
+        <h1>Index Page!</h1>
+      </Layout>
     )
   }
 }
