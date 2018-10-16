@@ -11,42 +11,48 @@ import InputLabel from "@material-ui/core/InputLabel"
 import LockIcon from "@material-ui/icons/LockOutlined"
 import Paper from "@material-ui/core/Paper"
 import Typography from "@material-ui/core/Typography"
-import withStyles from "@material-ui/core/styles/withStyles"
+import {
+  createStyles,
+  withStyles,
+  WithStyles,
+  Theme,
+} from "@material-ui/core/styles"
 
-const styles = theme => ({
-  layout: {
-    width: "auto",
-    display: "block", // Fix IE11 issue.
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-      width: 400,
-      marginLeft: "auto",
-      marginRight: "auto",
+const styles = (theme: Theme) =>
+  createStyles({
+    layout: {
+      width: "auto",
+      display: "block", // Fix IE11 issue.
+      marginLeft: theme.spacing.unit * 3,
+      marginRight: theme.spacing.unit * 3,
+      [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+        width: 400,
+        marginLeft: "auto",
+        marginRight: "auto",
+      },
     },
-  },
-  paper: {
-    marginTop: theme.spacing.unit * 8,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-      .spacing.unit * 3}px`,
-  },
-  avatar: {
-    margin: theme.spacing.unit,
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE11 issue.
-    marginTop: theme.spacing.unit,
-  },
-  submit: {
-    marginTop: theme.spacing.unit * 3,
-  },
-})
+    paper: {
+      marginTop: theme.spacing.unit * 8,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+        .spacing.unit * 3}px`,
+    },
+    avatar: {
+      margin: theme.spacing.unit,
+      backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+      width: "100%", // Fix IE11 issue.
+      marginTop: theme.spacing.unit,
+    },
+    submit: {
+      marginTop: theme.spacing.unit * 3,
+    },
+  })
 
-export interface LoginPageProps {}
+export interface LoginPageProps extends WithStyles<typeof styles> {}
 
 export interface LoginPageState {
   email: string
@@ -90,66 +96,61 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
     return (
       <Layout noSideBar>
-        <React.Fragment>
-          <CssBaseline />
-          <main className={classes.layout}>
-            <Paper className={classes.paper}>
-              <Avatar className={classes.avatar}>
-                <LockIcon />
-              </Avatar>
-              <Typography component="h1" variant="h5">
-                Sign in
-              </Typography>
-              <form className={classes.form} onSubmit={this.handleSubmit}>
-                <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="email">Email Address</InputLabel>
-                  <Input
-                    id="email"
-                    value={this.state.email}
-                    onChange={e => this.handleChangeEmail(e.target.value)}
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                  />
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="password">Password</InputLabel>
-                  <Input
-                    name="password"
-                    type="password"
-                    id="password"
-                    value={this.state.password}
-                    onChange={e => this.handleChangePass(e.target.value)}
-                    autoComplete="current-password"
-                  />
-                </FormControl>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      id="remember"
-                      value="remember"
-                      checked={this.state.remember}
-                      onChange={e =>
-                        this.handleChangeRemember(e.target.checked)
-                      }
-                      color="primary"
-                    />
-                  }
-                  label="Remember me"
+        <main className={classes.layout}>
+          <Paper className={classes.paper}>
+            <Avatar className={classes.avatar}>
+              <LockIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <form className={classes.form} onSubmit={this.handleSubmit}>
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="email">Email Address</InputLabel>
+                <Input
+                  id="email"
+                  value={this.state.email}
+                  onChange={e => this.handleChangeEmail(e.target.value)}
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
                 />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  Sign in
-                </Button>
-              </form>
-            </Paper>
-          </main>
-        </React.Fragment>
+              </FormControl>
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="password">Password</InputLabel>
+                <Input
+                  name="password"
+                  type="password"
+                  id="password"
+                  value={this.state.password}
+                  onChange={e => this.handleChangePass(e.target.value)}
+                  autoComplete="current-password"
+                />
+              </FormControl>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    id="remember"
+                    value="remember"
+                    checked={this.state.remember}
+                    onChange={e => this.handleChangeRemember(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+              >
+                Sign in
+              </Button>
+            </form>
+          </Paper>
+        </main>
       </Layout>
     )
   }
