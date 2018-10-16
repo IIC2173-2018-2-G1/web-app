@@ -20,7 +20,6 @@ const styles = (theme: Theme) =>
       position: "relative",
       height: "100%",
       overflow: "scroll",
-      padding: theme.spacing.unit * 3,
     },
   })
 

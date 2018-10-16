@@ -10,12 +10,17 @@ import NotificationsOff from "@material-ui/icons/NotificationsOff"
 import AddCircleOutline from "@material-ui/icons/AddCircleOutline"
 import Divider from "@material-ui/core/Divider"
 import IconButton from "@material-ui/core/IconButton"
-import { WithStyles, createStyles, withStyles } from "@material-ui/core/styles"
+import {
+  WithStyles,
+  createStyles,
+  withStyles,
+  Theme,
+} from "@material-ui/core/styles"
 import List from "@material-ui/core/List"
 import Tooltip from "@material-ui/core/Tooltip"
 import Zoom from "@material-ui/core/Zoom"
 
-const styles = theme =>
+const styles = (theme: Theme) =>
   createStyles({
     drawerPaper: {
       position: "relative",
@@ -38,7 +43,7 @@ const styles = theme =>
       cursor: "pointer",
       paddingRight: 120,
       "&:hover": {
-        color: "#aaaaaa",
+        color: theme.palette.getContrastText(theme.palette.background.paper),
       },
     },
     channelList: {
