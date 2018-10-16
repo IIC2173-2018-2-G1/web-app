@@ -12,7 +12,6 @@ class BrowseChannelsPage extends React.Component<
   render() {
     return (
       <Layout>
-        {" "}
         <h1>Browse all channels!</h1>
       </Layout>
     )

@@ -4,12 +4,12 @@ import {
   createGenerateClassName,
   Theme,
 } from "@material-ui/core/styles"
-import green from "@material-ui/core/colors/green"
+import teal from "@material-ui/core/colors/teal"
 
 const theme = createMuiTheme({
   palette: {
     type: "dark",
-    secondary: green,
+    secondary: teal,
     background: {
       default: "#252527",
       paper: "#534150",

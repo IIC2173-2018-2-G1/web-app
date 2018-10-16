@@ -18,8 +18,9 @@ const styles = (theme: Theme) =>
     },
     content: {
       position: "relative",
+      boxSizing: "border-box",
       height: "100%",
-      width: "100%",
+      width: "calc(100vw - 240px)",
       overflow: "scroll",
     },
   })
