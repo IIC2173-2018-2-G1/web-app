@@ -13,12 +13,13 @@ const styles = (theme: Theme) =>
       zIndex: 1,
       overflow: "hidden",
       display: "flex",
-      width: "100%",
+      width: "100vw",
       height: "100vh",
     },
     content: {
       position: "relative",
       height: "100%",
+      width: "100%",
       overflow: "scroll",
     },
   })
