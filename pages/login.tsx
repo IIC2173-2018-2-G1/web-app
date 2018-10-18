@@ -69,7 +69,7 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
   handleSubmit = event => {
     event.preventDefault()
-    console.log("user: ", this.state.email)
+    console.log("email: ", this.state.email)
     console.log("password: ", this.state.password)
     console.log("remember: ", this.state.remember)
     console.log("valid: ", this.validateForm())
@@ -79,15 +79,15 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
     return this.state.email.length > 0 && this.state.password.length > 0
   }
 
-  handleChangePass = password => {
+  handleChangePass = (password: string) => {
     this.setState({ password })
   }
 
-  handleChangeEmail = email => {
+  handleChangeEmail = (email: string) => {
     this.setState({ email })
   }
 
-  handleChangeRemember = remember => {
+  handleChangeRemember = (remember: boolean) => {
     this.setState({ remember })
   }
 
@@ -102,7 +102,7 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
               <LockIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              Log in
             </Typography>
             <form className={classes.form} onSubmit={this.handleSubmit}>
               <FormControl margin="normal" required fullWidth>
@@ -146,7 +146,7 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 color="primary"
                 className={classes.submit}
               >
-                Sign in
+                Log in
               </Button>
             </form>
           </Paper>
