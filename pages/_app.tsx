@@ -4,9 +4,13 @@ import { MuiThemeProvider } from "@material-ui/core/styles"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import JssProvider from "react-jss/lib/JssProvider"
 import getPageContext, { PageContext } from "../src/utils/getPageContext"
+import { Provider } from "mobx-react"
+import { ChannelStore } from "../src/stores/ChannelStore"
 
 class MyApp extends App {
   private pageContext: PageContext
+  private channelStore: ChannelStore = new ChannelStore()
+
   constructor(props) {
     super(props)
     this.pageContext = getPageContext()
@@ -39,7 +43,9 @@ class MyApp extends App {
             <CssBaseline />
             {/* Pass pageContext to the _document though the renderPage enhancer
                 to render collected styles on server side. */}
-            <Component pageContext={this.pageContext} {...pageProps} />
+            <Provider channelStore={this.channelStore}>
+              <Component pageContext={this.pageContext} {...pageProps} />
+            </Provider>
           </MuiThemeProvider>
         </JssProvider>
       </Container>

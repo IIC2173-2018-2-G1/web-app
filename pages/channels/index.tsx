@@ -1,13 +1,12 @@
 import React from "react"
+import { inject, observer } from "mobx-react"
+import { when } from "mobx"
 import {
   WithStyles,
   createStyles,
   withStyles,
   Theme,
 } from "@material-ui/core/styles"
-import "isomorphic-fetch"
-import Layout from "../../src/components/Layout"
-import Message from "../../src/components/Message"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import IconButton from "@material-ui/core/IconButton"
@@ -19,6 +18,9 @@ import StarBorder from "@material-ui/icons/StarBorder"
 import Zoom from "@material-ui/core/Zoom"
 import List from "@material-ui/core/List"
 import TextField from "@material-ui/core/TextField"
+import Layout from "../../src/components/Layout"
+import Message from "../../src/components/Message"
+import { ChannelStore } from "../../src/stores/ChannelStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -35,6 +37,7 @@ const styles = (theme: Theme) =>
       display: "flex",
       flexGrow: 1,
       flexDirection: "column-reverse",
+      minHeight: "calc(100% - 70px)",
       overflow: "auto",
     },
     listEnd: {},
@@ -49,7 +52,7 @@ const styles = (theme: Theme) =>
 
 export interface ChannelPageProps extends WithStyles<typeof styles> {
   id: string
-  posts: string[]
+  channelStore?: ChannelStore
 }
 
 export interface ChannelPageState {
@@ -57,6 +60,8 @@ export interface ChannelPageState {
   newMessageInput: string
 }
 
+@inject("channelStore")
+@observer
 class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   private listEnd: Element
   state = {
@@ -65,19 +70,23 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   }
 
   static async getInitialProps({ query }) {
-    // getting fake posts
-    const posts = await fetch("https://loripsum.net/api/40/short/plaintext")
-      .then(res => res.text())
-      .then(raw => raw.split(/\n\n/))
-    return { id: query.id, posts, key: query.id }
+    return { id: query.id, key: query.id }
   }
 
   subscribeButtonClicked = () => {
     this.setState({ subscribed: !this.state.subscribed })
   }
 
+  componentWillMount() {
+    this.props.channelStore.setChannel(this.props.id)
+  }
+
   componentDidMount() {
-    this.listEnd.scrollIntoView()
+    when(() => this.props.channelStore.loaded, this.scrollToBottom)
+  }
+
+  scrollToBottom = () => {
+    if (this.listEnd) this.listEnd.scrollIntoView()
   }
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,8 +134,12 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
         </AppBar>
         <List className={classes.messageList}>
           <div className={classes.listEnd} ref={el => (this.listEnd = el)} />
-          {this.props.posts.map((post, ix) => (
-            <Message key={ix} content={`${ix}. ${post}`} username="mabucchi" />
+          {this.props.channelStore.currentMessages.map((msg, ix) => (
+            <Message
+              key={msg.id}
+              content={`${ix}. ${msg.content}`}
+              username={msg.username}
+            />
           ))}
         </List>
         <TextField

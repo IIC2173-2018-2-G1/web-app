@@ -5,6 +5,7 @@ import {
   withStyles,
   Theme,
 } from "@material-ui/core/styles"
+import classNames from "classnames"
 import SideBar from "./SideBar"
 
 const styles = (theme: Theme) =>
@@ -27,6 +28,7 @@ const styles = (theme: Theme) =>
 
 export interface LayoutProps extends WithStyles<typeof styles> {
   noSideBar?: boolean
+  className?: string
 }
 
 export interface LayoutState {}
@@ -37,7 +39,9 @@ class Layout extends React.Component<LayoutProps, LayoutState> {
     return (
       <div className={classes.root}>
         {noSideBar ? undefined : <SideBar />}
-        <div className={classes.content}>{this.props.children}</div>
+        <div className={classNames(classes.content, this.props.className)}>
+          {this.props.children}
+        </div>
       </div>
     )
   }
