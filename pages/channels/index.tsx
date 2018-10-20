@@ -104,7 +104,7 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   render() {
     const { classes } = this.props
     return (
-      <Layout>
+      <Layout pageTitle={`Channel ${this.props.id}`}>
         <AppBar position="sticky" className={classes.appBar}>
           <Toolbar>
             <Typography variant="h6" className={classes.grow}>

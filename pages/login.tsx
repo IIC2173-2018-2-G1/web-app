@@ -95,7 +95,7 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
     const { classes } = this.props
 
     return (
-      <Layout noSideBar>
+      <Layout noSideBar pageTitle="Login">
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Avatar className={classes.avatar}>

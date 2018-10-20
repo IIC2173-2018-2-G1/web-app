@@ -64,7 +64,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     password_confirmation: "",
   }
 
-  handleSubmit = (event: Event) => {
+  handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
     console.log("email: ", this.state.email)
     console.log("username: ", this.state.username)
@@ -109,11 +109,11 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     const { classes } = this.props
 
     return (
-      <Layout noSideBar>
+      <Layout noSideBar pageTitle={"Sing Up"}>
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Typography component="h1" variant="h5">
-              Sign in
+              Sign up with us!
             </Typography>
             <form className={classes.form} onSubmit={this.handleSubmit}>
               <FormControl margin="normal" required fullWidth>

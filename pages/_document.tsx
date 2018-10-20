@@ -5,15 +5,14 @@ export default class MyDocument extends Document<NextContext> {
   render() {
     return (
       <html>
-        <Head>
-          <title>Arquitran Communications</title>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
-          />
-          <style>{`body { height: 100vh; }`}</style>
-        </Head>
         <body>
+          <Head>
+            <link
+              rel="stylesheet"
+              href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
+            />
+            <style>{`body { height: 100vh; }`}</style>
+          </Head>
           <Main />
           <NextScript />
         </body>
