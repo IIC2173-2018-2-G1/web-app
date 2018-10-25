@@ -45,7 +45,7 @@ export class ChannelStore {
 
     let n_messages = Math.floor(Math.random() * 30)
 
-    fetch(`https://loripsum.net/api/${n_messages}/short/plaintext`)
+    fetch(`https://loripsum.net/api/${n_messages}/short/plaintext`, {mode: 'no-cors'})
       .then(res => res.text())
       .then(raw => raw.split(/\n\n/))
       .then(
