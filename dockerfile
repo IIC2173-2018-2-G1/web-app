@@ -15,3 +15,4 @@ ENV NODE_ENV=production
 # Build and run the app
 RUN npm run build
 CMD npm start
+EXPOSE 3000
