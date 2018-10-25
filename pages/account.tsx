@@ -5,15 +5,7 @@ import FormControl from "@material-ui/core/FormControl"
 import Input from "@material-ui/core/Input"
 import InputLabel from "@material-ui/core/InputLabel"
 import Paper from "@material-ui/core/Paper"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
-import IconButton from "@material-ui/core/IconButton"
-import Tooltip from "@material-ui/core/Tooltip"
-import List from "@material-ui/core/List"
 import Typography from "@material-ui/core/Typography"
-import NotificationsActive from "@material-ui/icons/NotificationsActive"
-import NotificationsOff from "@material-ui/icons/NotificationsOff"
-import Zoom from "@material-ui/core/Zoom"
 import {
   createStyles,
   withStyles,
@@ -63,21 +55,6 @@ const styles = (theme: Theme) =>
     submit: {
       marginTop: theme.spacing.unit * 3,
     },
-    channelList: {
-      minHeight: 300,
-      maxHeight: "70%",
-      minWidth: 250,
-      overflow: "auto",
-      backgroundColor: theme.palette.background.paper,
-    },
-    listButton: {
-      position: "absolute",
-      top: "50%",
-      marginTop: -16,
-      zIndex: 100,
-      padding: 3,
-      left: 180,
-    },
   })
 
 export interface AccountPageProps extends WithStyles<typeof styles> {}
@@ -87,81 +64,7 @@ export interface AccountPageState {
   username: string
   password: string
   password_confirmation: string
-  channelSubscriptions: {
-    channel_id: number
-    channel_name: string
-    notificationsOn: boolean
-    notificationTooltipOpen: boolean
-  }[]
 }
-
-const channelSubscriptions: {
-  channel_id: number
-  channel_name: string
-  notificationsOn: boolean
-  notificationTooltipOpen: boolean
-}[] = [
-  {
-    channel_id: 1,
-    channel_name: "channel one",
-    notificationsOn: true,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 2,
-    channel_name: "channel two",
-    notificationsOn: false,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 3,
-    channel_name: "channel three",
-    notificationsOn: true,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 4,
-    channel_name: "channel four",
-    notificationsOn: false,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 5,
-    channel_name: "channel five",
-    notificationsOn: true,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 6,
-    channel_name: "channel six",
-    notificationsOn: false,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 7,
-    channel_name: "channel seven",
-    notificationsOn: true,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 8,
-    channel_name: "channel eight",
-    notificationsOn: false,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 9,
-    channel_name: "channel nine",
-    notificationsOn: true,
-    notificationTooltipOpen: false,
-  },
-  {
-    channel_id: 10,
-    channel_name: "channel ten",
-    notificationsOn: false,
-    notificationTooltipOpen: false,
-  },
-]
 
 class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
   state = {
@@ -169,7 +72,6 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
     username: "dacasas",
     password: "",
     password_confirmation: "",
-    channelSubscriptions,
   }
 
   handleSubmit = (event: React.FormEvent) => {
@@ -213,11 +115,6 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
     this.setState({ username })
   }
 
-  handleNotificationClick = (e: React.MouseEvent, channel_id: number) => {
-    // TODO Cambiar estado de la notificacion
-    e.preventDefault()
-  }
-
   getInitials = () => {
     return this.state.username
       .split(/\s+/)
@@ -229,42 +126,6 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
     return (
       <Layout>
         <main className={classes.layout}>
-          <Paper className={classes.paper}>
-            <Typography component="h1" variant="h5">
-              Subscriptions
-            </Typography>
-            <List className={classes.channelList}>
-              {this.state.channelSubscriptions.map(subscription => (
-                <ListItem key={subscription.channel_id} button={false}>
-                  <ListItemText secondary={subscription.channel_name} />
-                  <Tooltip
-                    onOpen={() => (subscription.notificationTooltipOpen = true)}
-                    onClose={() =>
-                      (subscription.notificationTooltipOpen = false)
-                    }
-                    TransitionComponent={Zoom}
-                    title={`${
-                      subscription.notificationsOn ? "Disable" : "Enable"
-                    } notifications`}
-                  >
-                    <IconButton
-                      className={classes.listButton}
-                      aria-label="Notifications"
-                      onClick={(e: React.MouseEvent) =>
-                        this.handleNotificationClick(e, subscription.channel_id)
-                      }
-                    >
-                      {subscription.notificationsOn ? (
-                        <NotificationsActive />
-                      ) : (
-                        <NotificationsOff />
-                      )}
-                    </IconButton>
-                  </Tooltip>
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
           <Paper className={classes.paper}>
             <Typography component="h1" variant="h5">
               Account information
