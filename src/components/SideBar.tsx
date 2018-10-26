@@ -19,6 +19,7 @@ import {
 import List from "@material-ui/core/List"
 import Tooltip from "@material-ui/core/Tooltip"
 import Zoom from "@material-ui/core/Zoom"
+import ChannelItem from "./ChannelItem"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -153,11 +154,11 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
             </div>
           </ListSubheader>
           {channelNames.map(channel => (
-            <Link href={`/channels?id=${channel.id}`} key={channel.id}>
-              <ListItem button>
-                <ListItemText secondary={channel.name} />
-              </ListItem>
-            </Link>
+            <ChannelItem
+              key={channel.id}
+              channel_id={channel.id}
+              channel_name={channel.name}
+            />
           ))}
         </List>
         <Divider />
