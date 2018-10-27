@@ -18,17 +18,20 @@ import {
 
 const styles = (theme: Theme) =>
   createStyles({
-    layout: {
+    form: {
       width: "auto",
       display: "block", // Fix IE11 issue.
-      marginLeft: theme.spacing.unit * 3,
-      marginRight: theme.spacing.unit * 3,
+      marginTop: theme.spacing.unit,
       [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
-        width: 400,
+        width: "calc(100% - 70px)",
         marginLeft: "auto",
         marginRight: "auto",
       },
       background: theme.palette.background.paper,
+      paddingLeft: theme.spacing.unit * 3,
+      paddingRight: theme.spacing.unit * 3,
+      paddingBottom: theme.spacing.unit,
+      borderRadius: theme.spacing.unit,
     },
     submit: {
       marginTop: theme.spacing.unit * 3,
@@ -56,11 +59,10 @@ const styles = (theme: Theme) =>
       right: 0,
     },
     messageList: {
+      margin: "auto",
       padding: theme.spacing.unit * 2,
-      display: "flex",
-      flexGrow: 1,
+      display: "block",
       flexDirection: "column-reverse",
-      minHeight: "calc(100% - 70px)",
       overflow: "auto",
     },
   })
@@ -183,6 +185,11 @@ const messages = [
   { id: 7, content: "mensaje7", username: "dacasas" },
   { id: 8, content: "mensaje8", username: "dacasas" },
   { id: 9, content: "mensaje9", username: "dacasas" },
+  { id: 10, content: "mensaje10", username: "dacasas" },
+  { id: 11, content: "mensaje11", username: "dacasas" },
+  { id: 12, content: "mensaje12", username: "dacasas" },
+  { id: 13, content: "mensaje13", username: "dacasas" },
+  { id: 14, content: "mensaje14", username: "dacasas" },
 ]
 
 export interface HashtagsPageProps extends WithStyles<typeof styles> {}
@@ -223,7 +230,7 @@ class HashtagsPage extends React.Component<
 
     return (
       <Layout>
-        <form className={classes.layout} onSubmit={this.handleSearch}>
+        <form className={classes.form} onSubmit={this.handleSearch}>
           <FormControl margin="normal" required fullWidth>
             <NoSsr>
               <Select
@@ -245,13 +252,21 @@ class HashtagsPage extends React.Component<
           </FormControl>
         </form>
         <List className={classes.messageList}>
-          {messages.map((msg, ix) => (
-            <Message
-              key={msg.id}
-              content={`${ix}. ${msg.content}`}
-              username={msg.username}
-            />
-          ))}
+          {messages.length > 0 ? (
+            messages.map((msg, ix) => (
+              <Message
+                key={msg.id}
+                content={`${ix}. ${msg.content}`}
+                username={msg.username}
+              />
+            ))
+          ) : (
+            <div>
+              <Typography variant="body2">
+                No messages with that hashtag
+              </Typography>
+            </div>
+          )}
         </List>
       </Layout>
     )
