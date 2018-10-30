@@ -139,6 +139,7 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
               key={msg.id}
               content={`${ix}. ${msg.content}`}
               username={msg.username}
+              actionBar={true}
             />
           ))}
         </List>

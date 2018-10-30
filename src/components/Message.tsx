@@ -58,6 +58,7 @@ const styles = (theme: Theme) =>
 export interface MessageProps extends WithStyles<typeof styles> {
   content: string
   username: string
+  actionBar: boolean
 }
 
 export interface MessageState {
@@ -107,7 +108,7 @@ class Message extends React.Component<MessageProps, MessageState> {
         onMouseEnter={this.mouseEnter}
         onMouseLeave={this.mouseLeave}
       >
-        {this.renderActionBar()}
+        {this.props.actionBar ? this.renderActionBar() : null}
         <div className={classes.columns}>
           <Avatar className={classes.avatar}>{this.getInitials()}</Avatar>
           <div className={classes.rows}>

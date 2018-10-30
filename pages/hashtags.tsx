@@ -281,6 +281,7 @@ class HashtagsPage extends React.Component<
                 key={msg.id}
                 content={`${ix}. ${msg.content}`}
                 username={msg.username}
+                actionBar={false}
               />
             ))
           ) : (
