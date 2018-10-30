@@ -1,18 +1,36 @@
 import React from "react"
 import Layout from "../src/components/Layout"
+import Typography from "@material-ui/core/Typography"
+import {
+  createStyles,
+  withStyles,
+  WithStyles,
+  Theme,
+} from "@material-ui/core/styles"
 
-export interface MainPageProps {}
+const styles = (theme: Theme) =>
+  createStyles({
+    title: {
+      padding: theme.spacing.unit * 3,
+      textAlign: "center",
+    },
+  })
+export interface MainPageProps extends WithStyles<typeof styles> {}
 
 export interface MainPageState {}
 
 class MainPage extends React.Component<MainPageProps, MainPageState> {
   render() {
+    const { classes } = this.props
+
     return (
       <Layout>
-        <h1>Index Page!</h1>
+        <Typography className={classes.title} component="h1" variant="h4">
+          Select a channel to start!
+        </Typography>
       </Layout>
     )
   }
 }
 
-export default MainPage
+export default withStyles(styles)(MainPage)
