@@ -9,6 +9,8 @@ import Paper from "@material-ui/core/Paper"
 import MenuItem from "@material-ui/core/MenuItem"
 import List from "@material-ui/core/List"
 import Message from "../src/components/Message"
+import Button from "@material-ui/core/Button"
+import Search from "@material-ui/icons/Search"
 import {
   createStyles,
   withStyles,
@@ -35,10 +37,17 @@ const styles = (theme: Theme) =>
     },
     submit: {
       marginTop: theme.spacing.unit * 3,
+      display: "inline-block",
+      float: "right",
+      width: 10,
     },
     input: {
       display: "flex",
       padding: 0,
+      "&:hover": {
+        cursor: "pointer",
+      },
+      //color: theme.palette.grey,
     },
     noOptionsMessage: {
       padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
@@ -64,6 +73,11 @@ const styles = (theme: Theme) =>
       display: "block",
       flexDirection: "column-reverse",
       overflow: "auto",
+    },
+    select: {
+      // width: 600,
+      display: "inline-block",
+      float: "left",
     },
   })
 
@@ -235,6 +249,7 @@ class HashtagsPage extends React.Component<
             <NoSsr>
               <Select
                 styles={selectStyles}
+                className={classes.select}
                 textFieldProps={{
                   label: "Hashtag",
                   InputLabelProps: {
@@ -249,6 +264,14 @@ class HashtagsPage extends React.Component<
                 placeholder="Write a hashtag"
               />
             </NoSsr>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              <Search color="action" />
+            </Button>
           </FormControl>
         </form>
         <List className={classes.messageList}>
