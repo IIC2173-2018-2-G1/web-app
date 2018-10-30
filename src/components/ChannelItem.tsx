@@ -30,21 +30,21 @@ export interface ChannelItemProps extends WithStyles<typeof styles> {
 }
 
 export interface ChannelItemState {
-  notificationsOn: boolean
-  notificationTooltipOpen: boolean
+  subscriptionOn: boolean
+  subscriptionTooltipOpen: boolean
 }
 
 class ChannelItem extends React.Component<ChannelItemProps, ChannelItemState> {
   constructor(props: ChannelItemProps) {
     super(props)
     this.state = {
-      notificationsOn: false,
-      notificationTooltipOpen: false,
+      subscriptionOn: false,
+      subscriptionTooltipOpen: false,
     }
   }
 
-  handleNotificationClick = () => {
-    this.setState({ notificationsOn: !this.state.notificationsOn })
+  handleSubscriptionClick = () => {
+    this.setState({ subscriptionOn: !this.state.subscriptionOn })
   }
 
   public render() {
@@ -55,19 +55,19 @@ class ChannelItem extends React.Component<ChannelItemProps, ChannelItemState> {
           <ListItem button>
             <ListItemText secondary={this.props.channel_name} />
             <Tooltip
-              onOpen={() => this.setState({ notificationTooltipOpen: true })}
-              onClose={() => this.setState({ notificationTooltipOpen: false })}
+              onOpen={() => this.setState({ subscriptionTooltipOpen: true })}
+              onClose={() => this.setState({ subscriptionTooltipOpen: false })}
               TransitionComponent={Zoom}
               title={`${
-                this.state.notificationsOn ? "Unsubscribe from" : "Subscribe to"
+                this.state.subscriptionOn ? "Unsubscribe from" : "Subscribe to"
               } channel`}
             >
               <IconButton
                 className={classes.listButton}
-                aria-label="Notifications"
-                onClick={this.handleNotificationClick}
+                aria-label="Subscription"
+                onClick={this.handleSubscriptionClick}
               >
-                {this.state.notificationsOn ? <Star /> : <StarBorder />}
+                {this.state.subscriptionOn ? <Star /> : <StarBorder />}
               </IconButton>
             </Tooltip>
           </ListItem>
