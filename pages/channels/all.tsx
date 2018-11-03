@@ -42,7 +42,7 @@ const styles = (theme: Theme) =>
       minHeight: 100,
       maxHeight: "70%",
       overflow: "auto",
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.background.default,
     },
     listHeader: {
       backgroundColor: "inherit",
