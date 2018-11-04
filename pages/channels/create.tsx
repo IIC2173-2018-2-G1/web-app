@@ -51,6 +51,7 @@ export interface CreateChannelPageProps extends WithStyles<typeof styles> {}
 
 export interface CreateChannelPageState {
   channelName: string
+  channelDescription: string
 }
 
 class CreateChannelPage extends React.Component<
@@ -59,15 +60,24 @@ class CreateChannelPage extends React.Component<
 > {
   state = {
     channelName: "",
+    channelDescription: "",
   }
 
   handleChangeChannelName = (channelName: string) => {
     this.setState({ channelName })
   }
 
+  handleChangeChannelDescription = (channelDescription: string) => {
+    this.setState({ channelDescription })
+  }
+
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(`Create channel with name: ${this.state.channelName}`)
+    console.log(
+      `Create channel with name: ${this.state.channelName}, and description: ${
+        this.state.channelDescription
+      }`,
+    )
   }
 
   render() {
@@ -89,6 +99,19 @@ class CreateChannelPage extends React.Component<
                   name="channelName"
                   autoComplete="channelName"
                   autoFocus
+                />
+              </FormControl>
+              <FormControl margin="normal" fullWidth>
+                <InputLabel htmlFor="channelName">
+                  Channel Description
+                </InputLabel>
+                <Input
+                  id="channelDescription"
+                  value={this.state.channelDescription}
+                  onChange={e =>
+                    this.handleChangeChannelDescription(e.target.value)
+                  }
+                  name="channelDescription"
                 />
               </FormControl>
               <Button
