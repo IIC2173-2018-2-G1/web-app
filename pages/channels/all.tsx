@@ -1,4 +1,5 @@
 import React from "react"
+import { inject, observer } from "mobx-react"
 import Layout from "../../src/components/Layout"
 import { List, ListSubheader, Tooltip, IconButton } from "@material-ui/core"
 import Link from "next/link"
@@ -11,6 +12,7 @@ import {
   withStyles,
   Theme,
 } from "@material-ui/core/styles"
+import { ChannelStore } from "../../src/stores/ChannelStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -49,27 +51,22 @@ const styles = (theme: Theme) =>
     },
   })
 
-const channelNames: { name: string; id: number }[] = [
-  { name: "channel one", id: 1 },
-  { name: "channel two", id: 2 },
-  { name: "channel three", id: 3 },
-  { name: "channel four", id: 4 },
-  { name: "channel five", id: 5 },
-  { name: "channel six", id: 6 },
-  { name: "channel seven", id: 7 },
-  { name: "channel eight", id: 8 },
-  { name: "channel nine", id: 9 },
-  { name: "channel ten", id: 10 },
-]
-
-export interface BrowseChannelsPageProps extends WithStyles<typeof styles> {}
+export interface BrowseChannelsPageProps extends WithStyles<typeof styles> {
+  channelStore?: ChannelStore
+}
 
 export interface BrowseChannelsPageState {}
 
+@inject("channelStore")
+@observer
 class BrowseChannelsPage extends React.Component<
   BrowseChannelsPageProps,
   BrowseChannelsPageState
 > {
+  componentWillMount() {
+    this.props.channelStore.setChannelList()
+  }
+
   render() {
     const { classes } = this.props
 
@@ -99,7 +96,7 @@ class BrowseChannelsPage extends React.Component<
               </Link>
             </div>
           </ListSubheader>
-          {channelNames.map(channel => (
+          {this.props.channelStore.currentChannelList.map(channel => (
             <ChannelItem
               key={channel.id}
               channel_id={channel.id}

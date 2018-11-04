@@ -1,4 +1,5 @@
 import React from "react"
+import { inject, observer } from "mobx-react"
 import Link from "next/link"
 import Router from "next/router"
 import ListItem from "@material-ui/core/ListItem"
@@ -20,6 +21,7 @@ import List from "@material-ui/core/List"
 import Tooltip from "@material-ui/core/Tooltip"
 import Zoom from "@material-ui/core/Zoom"
 import ChannelItem from "./ChannelItem"
+import { ChannelStore } from "../../src/stores/ChannelStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -58,30 +60,25 @@ const styles = (theme: Theme) =>
     },
   })
 
-export interface SideBarProps extends WithStyles<typeof styles> {}
+export interface SideBarProps extends WithStyles<typeof styles> {
+  channelStore?: ChannelStore
+}
 
 export interface SideBarState {
   notificationsOn: boolean
   notificationTooltipOpen: boolean
 }
 
-const channelNames: { name: string; id: number }[] = [
-  { name: "channel one", id: 1 },
-  { name: "channel two", id: 2 },
-  { name: "channel three", id: 3 },
-  { name: "channel four", id: 4 },
-  { name: "channel five", id: 5 },
-  { name: "channel six", id: 6 },
-  { name: "channel seven", id: 7 },
-  { name: "channel eight", id: 8 },
-  { name: "channel nine", id: 9 },
-  { name: "channel ten", id: 10 },
-]
-
+@inject("channelStore")
+@observer
 class SideBar extends React.Component<SideBarProps, SideBarState> {
   state = {
     notificationsOn: false,
     notificationTooltipOpen: false,
+  }
+
+  componentWillMount() {
+    this.props.channelStore.setChannelList()
   }
 
   handleUsernameClick = () => {
@@ -153,7 +150,7 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
               </Link>
             </div>
           </ListSubheader>
-          {channelNames.map(channel => (
+          {this.props.channelStore.currentChannelList.map(channel => (
             <ChannelItem
               key={channel.id}
               channel_id={channel.id}
