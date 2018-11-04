@@ -121,7 +121,7 @@ class CreateChannelPage extends React.Component<
                 color="primary"
                 className={classes.submit}
               >
-                Sign in
+                Create Channel
               </Button>
             </form>
           </Paper>
