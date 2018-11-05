@@ -1,4 +1,5 @@
 import React from "react"
+import { inject, observer } from "mobx-react"
 import Layout from "../../src/components/Layout"
 import Button from "@material-ui/core/Button"
 import FormControl from "@material-ui/core/FormControl"
@@ -12,6 +13,7 @@ import {
   WithStyles,
   Theme,
 } from "@material-ui/core/styles"
+import { ChannelStore } from "../../src/stores/ChannelStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,13 +49,17 @@ const styles = (theme: Theme) =>
     },
   })
 
-export interface CreateChannelPageProps extends WithStyles<typeof styles> {}
+export interface CreateChannelPageProps extends WithStyles<typeof styles> {
+  channelStore?: ChannelStore
+}
 
 export interface CreateChannelPageState {
   channelName: string
   channelDescription: string
 }
 
+@inject("channelStore")
+@observer
 class CreateChannelPage extends React.Component<
   CreateChannelPageProps,
   CreateChannelPageState
@@ -73,11 +79,13 @@ class CreateChannelPage extends React.Component<
 
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(
-      `Create channel with name: ${this.state.channelName}, and description: ${
-        this.state.channelDescription
-      }`,
-    )
+    this.props.channelStore.addChannel({
+      id: null,
+      name: this.state.channelName,
+      description: this.state.channelDescription,
+      subscriptionOn: false,
+    })
+    this.setState({ channelDescription: "", channelName: "" })
   }
 
   render() {
