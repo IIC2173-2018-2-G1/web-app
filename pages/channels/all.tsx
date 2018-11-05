@@ -13,6 +13,7 @@ import {
   Theme,
 } from "@material-ui/core/styles"
 import { ChannelStore } from "../../src/stores/ChannelStore"
+import { UserStore } from "../../src/stores/UserStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,18 +54,20 @@ const styles = (theme: Theme) =>
 
 export interface BrowseChannelsPageProps extends WithStyles<typeof styles> {
   channelStore?: ChannelStore
+  userStore?: UserStore
 }
 
 export interface BrowseChannelsPageState {}
 
 @inject("channelStore")
+@inject("userStore")
 @observer
 class BrowseChannelsPage extends React.Component<
   BrowseChannelsPageProps,
   BrowseChannelsPageState
 > {
   componentWillMount() {
-    this.props.channelStore.setChannelList()
+    this.props.channelStore.setChannelList(this.props.userStore.currentToken)
   }
 
   render() {

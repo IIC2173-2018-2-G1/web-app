@@ -14,6 +14,7 @@ import {
   Theme,
 } from "@material-ui/core/styles"
 import { ChannelStore } from "../../src/stores/ChannelStore"
+import { UserStore } from "../../src/stores/UserStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -51,6 +52,7 @@ const styles = (theme: Theme) =>
 
 export interface CreateChannelPageProps extends WithStyles<typeof styles> {
   channelStore?: ChannelStore
+  userStore?: UserStore
 }
 
 export interface CreateChannelPageState {
@@ -59,6 +61,7 @@ export interface CreateChannelPageState {
 }
 
 @inject("channelStore")
+@inject("userStore")
 @observer
 class CreateChannelPage extends React.Component<
   CreateChannelPageProps,
@@ -79,12 +82,15 @@ class CreateChannelPage extends React.Component<
 
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    this.props.channelStore.addChannel({
-      id: null,
-      name: this.state.channelName,
-      description: this.state.channelDescription,
-      subscriptionOn: false,
-    })
+    this.props.channelStore.addChannel(
+      {
+        id: null,
+        name: this.state.channelName,
+        description: this.state.channelDescription,
+        subscriptionOn: false,
+      },
+      this.props.userStore.currentToken,
+    )
     this.setState({ channelDescription: "", channelName: "" })
   }
 

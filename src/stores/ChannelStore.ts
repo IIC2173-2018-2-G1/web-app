@@ -48,7 +48,7 @@ export class ChannelStore {
   }
 
   @action
-  public addChannel(newChannel: Channel): void {
+  public addChannel(newChannel: Channel, token: string): void {
     fetch("http://charette1.ing.puc.cl/channels", {
       method: "POST",
       body: JSON.stringify({
@@ -57,7 +57,7 @@ export class ChannelStore {
       }),
       headers: {
         "Content-Type": "application/json",
-        // TODO Include user's header token
+        Authorization: token,
       },
       credentials: "same-origin",
     })
@@ -74,7 +74,7 @@ export class ChannelStore {
   }
 
   @action
-  public setChannelList(): void {
+  public setChannelList(token: string): void {
     this.channelList = []
     this.channelList = [
       { description: "", subscriptionOn: false, name: "channel one", id: 1 },
@@ -91,9 +91,23 @@ export class ChannelStore {
     this.awaitingResponse = true
     // TODO Handle channels and subscriptions responses
     Promise.all([
-      fetch("http://charette1.ing.puc.cl/channels", { mode: "no-cors" }),
+      fetch("http://charette1.ing.puc.cl/channels", {
+        mode: "no-cors",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        credentials: "same-origin",
+      }),
       fetch("http://charette1.ing.puc.cl/user/subscriptions", {
         mode: "no-cors",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        credentials: "same-origin",
       }),
     ])
       .then(([channels_r, subscriptions_r]) => {
@@ -117,7 +131,7 @@ export class ChannelStore {
   }
 
   @action
-  public setChannel(channelID: number): void {
+  public setChannel(channelID: number, token: string): void {
     this.channel = this.channelList.filter(ch => ch.id == channelID)[0]
     this.messages = []
     this.awaitingResponse = true

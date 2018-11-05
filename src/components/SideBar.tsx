@@ -22,6 +22,7 @@ import Tooltip from "@material-ui/core/Tooltip"
 import Zoom from "@material-ui/core/Zoom"
 import ChannelItem from "./ChannelItem"
 import { ChannelStore } from "../../src/stores/ChannelStore"
+import { UserStore } from "../../src/stores/UserStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -62,6 +63,7 @@ const styles = (theme: Theme) =>
 
 export interface SideBarProps extends WithStyles<typeof styles> {
   channelStore?: ChannelStore
+  userStore?: UserStore
 }
 
 export interface SideBarState {
@@ -70,6 +72,7 @@ export interface SideBarState {
 }
 
 @inject("channelStore")
+@inject("userStore")
 @observer
 class SideBar extends React.Component<SideBarProps, SideBarState> {
   state = {
@@ -78,7 +81,7 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
   }
 
   componentWillMount() {
-    this.props.channelStore.setChannelList()
+    this.props.channelStore.setChannelList(this.props.userStore.currentToken)
   }
 
   handleUsernameClick = () => {
