@@ -6,10 +6,12 @@ import JssProvider from "react-jss/lib/JssProvider"
 import getPageContext, { PageContext } from "../src/utils/getPageContext"
 import { Provider } from "mobx-react"
 import { ChannelStore } from "../src/stores/ChannelStore"
+import { UserStore } from "../src/stores/UserStore"
 
 class MyApp extends App {
   private pageContext: PageContext
   private channelStore: ChannelStore = new ChannelStore()
+  private userStore: UserStore = new UserStore()
 
   constructor(props) {
     super(props)
@@ -43,7 +45,10 @@ class MyApp extends App {
             <CssBaseline />
             {/* Pass pageContext to the _document though the renderPage enhancer
                 to render collected styles on server side. */}
-            <Provider channelStore={this.channelStore}>
+            <Provider
+              channelStore={this.channelStore}
+              userStore={this.userStore}
+            >
               <Component pageContext={this.pageContext} {...pageProps} />
             </Provider>
           </MuiThemeProvider>

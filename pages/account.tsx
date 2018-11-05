@@ -1,4 +1,5 @@
 import React from "react"
+import { inject, observer } from "mobx-react"
 import Layout from "../src/components/Layout"
 import Button from "@material-ui/core/Button"
 import FormControl from "@material-ui/core/FormControl"
@@ -6,6 +7,7 @@ import Input from "@material-ui/core/Input"
 import InputLabel from "@material-ui/core/InputLabel"
 import Paper from "@material-ui/core/Paper"
 import Typography from "@material-ui/core/Typography"
+import { UserStore } from "../src/stores/UserStore"
 import {
   createStyles,
   withStyles,
@@ -57,30 +59,50 @@ const styles = (theme: Theme) =>
     },
   })
 
-export interface AccountPageProps extends WithStyles<typeof styles> {}
+export interface AccountPageProps extends WithStyles<typeof styles> {
+  userStore?: UserStore
+}
 
 export interface AccountPageState {
   email: string
   username: string
+  firstName: string
+  lastName: string
   password: string
   password_confirmation: string
 }
 
+@inject("userStore")
+@observer
 class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
   state = {
-    email: "dacasas@uc.cl",
-    username: "dacasas",
+    email: "",
+    username: "",
+    firstName: "",
+    lastName: "",
     password: "",
     password_confirmation: "",
   }
 
+  componentWillMount() {
+    if (this.props.userStore.currentUser != null) {
+      this.setState({
+        email: this.props.userStore.currentUser.email,
+        username: this.props.userStore.currentUser.username,
+        firstName: this.props.userStore.currentUser.firstName,
+        lastName: this.props.userStore.currentUser.lastName,
+      })
+    }
+  }
+
   handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
-    console.log("email: ", this.state.email)
-    console.log("username: ", this.state.username)
-    console.log("password: ", this.state.password)
-    console.log("password_confirmation: ", this.state.password_confirmation)
-    console.log("valid: ", this.validateForm())
+    this.props.userStore.updateUser({
+      email: this.state.email,
+      username: this.state.username,
+      lastName: this.state.lastName,
+      firstName: this.state.firstName,
+    })
   }
 
   validateForm = () => {
@@ -113,6 +135,14 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
 
   handleChangeUsername = (username: string) => {
     this.setState({ username })
+  }
+
+  handleChangeFirstName = (firstName: string) => {
+    this.setState({ firstName })
+  }
+
+  handleChangeLastName = (lastName: string) => {
+    this.setState({ lastName })
   }
 
   getInitials = () => {
@@ -150,6 +180,26 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
                   onChange={e => this.handleChangeUsername(e.target.value)}
                   name="username"
                   autoComplete="username"
+                />
+              </FormControl>
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="firstName">First Name</InputLabel>
+                <Input
+                  id="firstName"
+                  value={this.state.firstName}
+                  onChange={e => this.handleChangeFirstName(e.target.value)}
+                  name="firstName"
+                  autoComplete="firstName"
+                />
+              </FormControl>
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="lastName">Last Name</InputLabel>
+                <Input
+                  id="lastName"
+                  value={this.state.lastName}
+                  onChange={e => this.handleChangeLastName(e.target.value)}
+                  name="lastName"
+                  autoComplete="lastName"
                 />
               </FormControl>
               <FormControl margin="normal" required fullWidth>

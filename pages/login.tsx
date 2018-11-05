@@ -1,4 +1,5 @@
 import React from "react"
+import { inject, observer } from "mobx-react"
 import Layout from "../src/components/Layout"
 import Avatar from "@material-ui/core/Avatar"
 import Button from "@material-ui/core/Button"
@@ -10,6 +11,7 @@ import InputLabel from "@material-ui/core/InputLabel"
 import LockIcon from "@material-ui/icons/LockOutlined"
 import Paper from "@material-ui/core/Paper"
 import Typography from "@material-ui/core/Typography"
+import { UserStore } from "../src/stores/UserStore"
 import {
   createStyles,
   withStyles,
@@ -51,7 +53,9 @@ const styles = (theme: Theme) =>
     },
   })
 
-export interface LoginPageProps extends WithStyles<typeof styles> {}
+export interface LoginPageProps extends WithStyles<typeof styles> {
+  userStore?: UserStore
+}
 
 export interface LoginPageState {
   email: string
@@ -59,6 +63,8 @@ export interface LoginPageState {
   remember: boolean
 }
 
+@inject("userStore")
+@observer
 class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
   state = {
     email: "",
@@ -68,10 +74,11 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
   handleSubmit = event => {
     event.preventDefault()
-    console.log("email: ", this.state.email)
-    console.log("password: ", this.state.password)
-    console.log("remember: ", this.state.remember)
-    console.log("valid: ", this.validateForm())
+    if (this.validateForm()) {
+      this.props.userStore.login(this.state.email, this.state.password)
+    } else {
+      // TODO Show errors
+    }
   }
 
   validateForm = () => {

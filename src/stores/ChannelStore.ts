@@ -49,7 +49,6 @@ export class ChannelStore {
 
   @action
   public addChannel(newChannel: Channel): void {
-    // TODO Request for create a channel, push the response to the list
     fetch("http://charette1.ing.puc.cl/channels", {
       method: "POST",
       body: JSON.stringify({
