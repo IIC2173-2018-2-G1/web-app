@@ -10,7 +10,7 @@ export interface User {
 
 export class UserStore {
   @observable
-  private user: User
+  private user: User = null
 
   @observable
   private token: string

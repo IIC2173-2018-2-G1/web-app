@@ -45,6 +45,10 @@ class HashtagsPage extends React.Component<
     hashtag: null,
   }
 
+  componentWillMount = () => {
+    this.props.hashtagStore.setHashtagList(this.props.userStore.currentToken)
+  }
+
   handleChangeHashtag = (hashtag: { label: string; value: string }) => {
     this.setState({ hashtag })
   }

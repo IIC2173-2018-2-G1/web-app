@@ -14,6 +14,7 @@ import {
   WithStyles,
   Theme,
 } from "@material-ui/core/styles"
+import Link from "next/link"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,6 +47,16 @@ const styles = (theme: Theme) =>
     },
     submit: {
       marginTop: theme.spacing.unit * 3,
+    },
+    bottomText: {
+      marginTop: theme.spacing.unit * 2,
+    },
+    link: {
+      color: theme.palette.primary.light,
+      "&:hover": {
+        color: theme.palette.getContrastText(theme.palette.background.default),
+        cursor: "pointer",
+      },
     },
   })
 
@@ -219,6 +230,14 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                 Sign in
               </Button>
             </form>
+            <Typography className={classes.bottomText} component="p">
+              Already have an account?
+              <Link href={"/login"}>
+                <Typography className={classes.link}>
+                  Login to your account!
+                </Typography>
+              </Link>
+            </Typography>
           </Paper>
         </main>
       </Layout>
