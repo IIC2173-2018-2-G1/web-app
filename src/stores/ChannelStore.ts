@@ -49,7 +49,7 @@ export class ChannelStore {
 
   @action
   public addChannel(newChannel: Channel, token: string): void {
-    fetch("http://charette1.ing.puc.cl/channels", {
+    fetch("http://charette1.ing.puc.cl/api/v1/channels", {
       method: "POST",
       body: JSON.stringify({
         name: newChannel.name,
@@ -75,23 +75,10 @@ export class ChannelStore {
 
   @action
   public setChannelList(token: string): void {
-    this.channelList = []
-    this.channelList = [
-      { description: "", subscriptionOn: false, name: "channel one", id: 1 },
-      { description: "", subscriptionOn: false, name: "channel two", id: 2 },
-      { description: "", subscriptionOn: false, name: "channel three", id: 3 },
-      { description: "", subscriptionOn: false, name: "channel four", id: 4 },
-      { description: "", subscriptionOn: false, name: "channel five", id: 5 },
-      { description: "", subscriptionOn: false, name: "channel six", id: 6 },
-      { description: "", subscriptionOn: false, name: "channel seven", id: 7 },
-      { description: "", subscriptionOn: false, name: "channel eight", id: 8 },
-      { description: "", subscriptionOn: false, name: "channel nine", id: 9 },
-      { description: "", subscriptionOn: false, name: "channel ten", id: 10 },
-    ]
     this.awaitingResponse = true
     // TODO Handle channels and subscriptions responses
     Promise.all([
-      fetch("http://charette1.ing.puc.cl/channels", {
+      fetch("http://charette1.ing.puc.cl/api/v1/channels", {
         mode: "no-cors",
         method: "GET",
         headers: {
@@ -100,7 +87,7 @@ export class ChannelStore {
         },
         credentials: "same-origin",
       }),
-      fetch("http://charette1.ing.puc.cl/user/subscriptions", {
+      fetch("http://charette1.ing.puc.cl/api/v1/user/subscriptions", {
         mode: "no-cors",
         method: "GET",
         headers: {
@@ -131,26 +118,32 @@ export class ChannelStore {
   }
 
   @action
-  public setChannel(channelID: number, token: string): void {
-    this.channel = this.channelList.filter(ch => ch.id == channelID)[0]
+  public setChannel(
+    channel_id: number,
+    token: string,
+    count: number,
+    start: number,
+  ): void {
+    this.channel = this.channelList.filter(ch => ch.id == channel_id)[0]
     this.messages = []
+
     this.awaitingResponse = true
-
-    let n_messages = Math.floor(Math.random() * 30)
-
-    fetch(`https://loripsum.net/api/${n_messages}/short/plaintext`, {
+    fetch("http://charette1.ing.puc.cl/api/v1/messages", {
       mode: "no-cors",
+      method: "GET",
+      body: JSON.stringify({
+        channel_id,
+        start,
+        count,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      credentials: "same-origin",
     })
-      .then(res => res.text())
-      .then(raw => raw.split(/\n\n/))
-      .then(
-        raw_array =>
-          (this.messages = raw_array.map((content, ix) => ({
-            content,
-            username: "mabucchi",
-            id: `${ix}`,
-          }))),
-      )
+      .then(res => res.json())
+      .then(raw_array => (this.messages = raw_array))
       .then(() => (this.awaitingResponse = false))
   }
 }

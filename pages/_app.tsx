@@ -7,11 +7,13 @@ import getPageContext, { PageContext } from "../src/utils/getPageContext"
 import { Provider } from "mobx-react"
 import { ChannelStore } from "../src/stores/ChannelStore"
 import { UserStore } from "../src/stores/UserStore"
+import { HashtagStore } from "../src/stores/HashtagStore"
 
 class MyApp extends App {
   private pageContext: PageContext
   private channelStore: ChannelStore = new ChannelStore()
   private userStore: UserStore = new UserStore()
+  private hashtagStore: HashtagStore = new HashtagStore()
 
   constructor(props) {
     super(props)
@@ -48,6 +50,7 @@ class MyApp extends App {
             <Provider
               channelStore={this.channelStore}
               userStore={this.userStore}
+              hashtagStore={this.hashtagStore}
             >
               <Component pageContext={this.pageContext} {...pageProps} />
             </Provider>

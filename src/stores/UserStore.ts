@@ -27,7 +27,7 @@ export class UserStore {
 
   @action
   public login(email: string, password: string): void {
-    fetch("http://charette1.ing.puc.cl/user/login", {
+    fetch("http://charette1.ing.puc.cl/api/v1/user/login", {
       method: "POST",
       body: JSON.stringify({
         email: email,
@@ -52,7 +52,7 @@ export class UserStore {
 
   @action
   public logout(): void {
-    fetch("http://charette1.ing.puc.cl/user/logout", {
+    fetch("http://charette1.ing.puc.cl/api/v1/user/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,7 +69,7 @@ export class UserStore {
 
   @action
   public createUser(user: User, password: string): void {
-    fetch("http://charette1.ing.puc.cl/users", {
+    fetch("http://charette1.ing.puc.cl/api/v1/users", {
       method: "POST",
       body: JSON.stringify({
         username: user.username,
@@ -89,7 +89,7 @@ export class UserStore {
 
   @action
   public resetPassword(email: string) {
-    fetch("http://charette1.ing.puc.cl/user/reset-password", {
+    fetch("http://charette1.ing.puc.cl/api/v1/user/reset-password", {
       method: "GET",
       body: JSON.stringify({ email }),
       headers: {
@@ -101,7 +101,7 @@ export class UserStore {
 
   @action
   public updateUser(user: User): void {
-    fetch("http://charette1.ing.puc.cl/user", {
+    fetch("http://charette1.ing.puc.cl/api/v1/user", {
       method: "PUT",
       body: JSON.stringify({
         username: user.username,
