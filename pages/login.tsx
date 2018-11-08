@@ -168,12 +168,12 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             </form>
             <Typography className={classes.bottomText} component="p">
               Don't have an account yet?
-              <Link href={"/sign-up"}>
-                <Typography className={classes.link}>
-                  Create an account!
-                </Typography>
-              </Link>
             </Typography>
+            <Link href={"/sign-up"}>
+              <Typography className={classes.link}>
+                Create an account!
+              </Typography>
+            </Link>
           </Paper>
         </main>
       </Layout>

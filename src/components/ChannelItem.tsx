@@ -27,7 +27,6 @@ const styles = (theme: Theme) =>
 export interface ChannelItemProps extends WithStyles<typeof styles> {
   channel_id: number
   channel_name: string
-  key: number
 }
 
 export interface ChannelItemState {
@@ -51,7 +50,7 @@ class ChannelItem extends React.Component<ChannelItemProps, ChannelItemState> {
   public render() {
     const { classes } = this.props
     return (
-      <div key={this.props.key}>
+      <div key={this.props.channel_id}>
         <Link href={`/channels?id=${this.props.channel_id}`}>
           <ListItem button>
             <ListItemText secondary={this.props.channel_name} />

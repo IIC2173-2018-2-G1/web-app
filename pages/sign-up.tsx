@@ -99,6 +99,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
       )
     } else {
       // Show errors
+      alert("Passwords do not match")
     }
   }
 
@@ -227,17 +228,17 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                 color="primary"
                 className={classes.submit}
               >
-                Sign in
+                Sign up
               </Button>
             </form>
             <Typography className={classes.bottomText} component="p">
               Already have an account?
-              <Link href={"/login"}>
-                <Typography className={classes.link}>
-                  Login to your account!
-                </Typography>
-              </Link>
             </Typography>
+            <Link href={"/login"}>
+              <Typography className={classes.link}>
+                Login to your account!
+              </Typography>
+            </Link>
           </Paper>
         </main>
       </Layout>

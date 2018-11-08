@@ -15,6 +15,22 @@ export class UserStore {
   @observable
   private token: string
 
+  @observable
+  private error: string
+
+  @observable
+  private loginSuccessful: boolean = false
+
+  @computed
+  public get currentError(): string {
+    return this.error
+  }
+
+  @computed
+  public get loginSuccess(): boolean {
+    return this.loginSuccessful
+  }
+
   @computed
   public get currentUser(): User {
     return this.user
@@ -28,6 +44,7 @@ export class UserStore {
   @action
   public login(email: string, password: string): void {
     fetch("http://charette1.ing.puc.cl/api/v1/user/login", {
+      mode: "no-cors",
       method: "POST",
       body: JSON.stringify({
         email: email,
@@ -38,21 +55,36 @@ export class UserStore {
       },
       credentials: "same-origin",
     })
-      .then(response => response.json(), error => error.message)
+      .then(
+        response => {
+          response.json()
+          this.loginSuccessful = true
+        },
+        error => {
+          this.loginSuccessful = false
+          this.error = error
+        },
+      )
       .then(res => {
-        this.user = {
-          lastName: res.user.last_name,
-          username: res.user.username,
-          firstName: res.user.first_name,
-          email: res.user.email,
+        if (this.loginSuccessful) {
+          this.user = {
+            lastName: res.user.last_name,
+            username: res.user.username,
+            firstName: res.user.first_name,
+            email: res.user.email,
+          }
+          this.token = res.user.token
+        } else {
+          this.user = null
+          this.token = null
         }
-        this.token = res.user.token
       })
   }
 
   @action
   public logout(): void {
     fetch("http://charette1.ing.puc.cl/api/v1/user/logout", {
+      mode: "no-cors",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,6 +102,7 @@ export class UserStore {
   @action
   public createUser(user: User, password: string): void {
     fetch("http://charette1.ing.puc.cl/api/v1/users", {
+      mode: "no-cors",
       method: "POST",
       body: JSON.stringify({
         username: user.username,
@@ -90,6 +123,7 @@ export class UserStore {
   @action
   public resetPassword(email: string) {
     fetch("http://charette1.ing.puc.cl/api/v1/user/reset-password", {
+      mode: "no-cors",
       method: "GET",
       body: JSON.stringify({ email }),
       headers: {
@@ -102,6 +136,7 @@ export class UserStore {
   @action
   public updateUser(user: User): void {
     fetch("http://charette1.ing.puc.cl/api/v1/user", {
+      mode: "no-cors",
       method: "PUT",
       body: JSON.stringify({
         username: user.username,

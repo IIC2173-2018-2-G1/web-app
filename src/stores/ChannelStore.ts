@@ -50,6 +50,7 @@ export class ChannelStore {
   @action
   public addChannel(newChannel: Channel, token: string): void {
     fetch("http://charette1.ing.puc.cl/api/v1/channels", {
+      mode: "no-cors",
       method: "POST",
       body: JSON.stringify({
         name: newChannel.name,
