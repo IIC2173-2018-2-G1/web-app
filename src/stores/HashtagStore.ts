@@ -48,7 +48,7 @@ export class HashtagStore {
   @action
   public setHashtagList(token: string): void {
     this.awaitingResponse = true
-    fetch("http://charette1.ing.puc.cl/api/v1/hashtags", {
+    fetch(`http://localhost/v1/hashtags`, {
       mode: "no-cors",
       method: "GET",
       headers: {
@@ -70,7 +70,7 @@ export class HashtagStore {
     count: number,
   ): void {
     this.awaitingResponse = true
-    fetch("http://charette1.ing.puc.cl/api/v1/messages", {
+    fetch(`http://localhost/v1/messages`, {
       mode: "no-cors",
       method: "GET",
       body: JSON.stringify({

@@ -43,7 +43,7 @@ export class UserStore {
 
   @action
   public login(email: string, password: string): void {
-    fetch("http://charette1.ing.puc.cl/api/v1/user/login", {
+    fetch(`http://localhost/v1/user/login`, {
       mode: "no-cors",
       method: "POST",
       body: JSON.stringify({
@@ -83,7 +83,7 @@ export class UserStore {
 
   @action
   public logout(): void {
-    fetch("http://charette1.ing.puc.cl/api/v1/user/logout", {
+    fetch(`http://localhost/v1/user/logout`, {
       mode: "no-cors",
       method: "POST",
       headers: {
@@ -101,28 +101,43 @@ export class UserStore {
 
   @action
   public createUser(user: User, password: string): void {
-    fetch("http://charette1.ing.puc.cl/api/v1/users", {
-      mode: "no-cors",
+    fetch(`http://localhost/v1/users`, {
       method: "POST",
       body: JSON.stringify({
-        username: user.username,
-        first_name: user.firstName,
-        last_name: user.lastName,
-        email: user.email,
-        password: password,
+        user: {
+          username: user.username,
+          first_ame: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+          password: password,
+        },
       }),
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "same-origin",
     })
-      .then(response => response.json(), error => error.message)
-      .then(user => this.login(user.email, password))
+      .then(
+        response => {
+          response.body
+        },
+        error => error.message,
+      )
+      .then(res => {
+        console.log(res)
+        this.token = res.user.token
+        this.user = {
+          email: res.user.email,
+          username: res.user.username,
+          firstName: res.user.first_name,
+          lastName: res.user.last_name,
+        }
+        window.location.replace("/")
+      })
   }
 
   @action
   public resetPassword(email: string) {
-    fetch("http://charette1.ing.puc.cl/api/v1/user/reset-password", {
+    fetch(`http://localhost/v1/user/reset-password`, {
       mode: "no-cors",
       method: "GET",
       body: JSON.stringify({ email }),
@@ -135,7 +150,7 @@ export class UserStore {
 
   @action
   public updateUser(user: User): void {
-    fetch("http://charette1.ing.puc.cl/api/v1/user", {
+    fetch(`http://localhost/v1/user`, {
       mode: "no-cors",
       method: "PUT",
       body: JSON.stringify({

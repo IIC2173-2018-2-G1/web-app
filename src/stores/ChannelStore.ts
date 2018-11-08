@@ -49,7 +49,7 @@ export class ChannelStore {
 
   @action
   public addChannel(newChannel: Channel, token: string): void {
-    fetch("http://charette1.ing.puc.cl/api/v1/channels", {
+    fetch(`http://localhost/v1/channels`, {
       mode: "no-cors",
       method: "POST",
       body: JSON.stringify({
@@ -79,7 +79,7 @@ export class ChannelStore {
     this.awaitingResponse = true
     // TODO Handle channels and subscriptions responses
     Promise.all([
-      fetch("http://charette1.ing.puc.cl/api/v1/channels", {
+      fetch(`http://localhost/v1/channels`, {
         mode: "no-cors",
         method: "GET",
         headers: {
@@ -88,7 +88,7 @@ export class ChannelStore {
         },
         credentials: "same-origin",
       }),
-      fetch("http://charette1.ing.puc.cl/api/v1/user/subscriptions", {
+      fetch(`http://localhost/v1/user/subscriptions`, {
         mode: "no-cors",
         method: "GET",
         headers: {
@@ -129,7 +129,7 @@ export class ChannelStore {
     this.messages = []
 
     this.awaitingResponse = true
-    fetch("http://charette1.ing.puc.cl/api/v1/messages", {
+    fetch(`http://localhost/v1/messages`, {
       mode: "no-cors",
       method: "GET",
       body: JSON.stringify({
