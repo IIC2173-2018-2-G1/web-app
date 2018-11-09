@@ -25,7 +25,7 @@ const styles = (theme: Theme) =>
   })
 
 export interface ChannelItemProps extends WithStyles<typeof styles> {
-  channel_id: number
+  channel_id: string
   channel_name: string
 }
 

@@ -52,7 +52,7 @@ const styles = (theme: Theme) =>
   })
 
 export interface ChannelPageProps extends WithStyles<typeof styles> {
-  id: number
+  id: string
   channelStore?: ChannelStore
   userStore?: UserStore
 }

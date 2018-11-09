@@ -80,7 +80,10 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
     notificationTooltipOpen: false,
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    if (!this.props.userStore.currentUser.username) {
+      Router.push("/login")
+    }
     this.props.channelStore.setChannelList(this.props.userStore.currentToken)
   }
 
@@ -105,7 +108,14 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
       >
         <ListItem button onClick={this.handleUsernameClick}>
           <div className={classes.container}>
-            <ListItemText primary="Username" secondary="Name Lastname" />
+            <ListItemText
+              primary={this.props.userStore.currentUser.username}
+              secondary={
+                this.props.userStore.currentUser.firstName +
+                " " +
+                this.props.userStore.currentUser.lastName
+              }
+            />
             <Tooltip
               onOpen={() => this.setState({ notificationTooltipOpen: true })}
               onClose={() => this.setState({ notificationTooltipOpen: false })}

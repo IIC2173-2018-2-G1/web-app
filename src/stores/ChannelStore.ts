@@ -1,11 +1,11 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
+import Router from "next/router"
 
 export interface Channel {
-  id: number
+  id: string
   name: string
   description: string
-  subscriptionOn: boolean
 }
 
 export interface Message {
@@ -50,69 +50,49 @@ export class ChannelStore {
   @action
   public addChannel(newChannel: Channel, token: string): void {
     fetch(`http://localhost/v1/channels`, {
-      mode: "no-cors",
       method: "POST",
       body: JSON.stringify({
         name: newChannel.name,
-        descirption: newChannel.description,
+        description: newChannel.description,
       }),
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         Authorization: token,
       },
-      credentials: "same-origin",
     })
-      .then(response => response.json(), error => error.message)
-      .then(ch => {
-        let channel = {
-          id: ch.id,
-          name: ch.name,
-          description: ch.description,
-          subscriptionOn: false,
-        }
-        this.channelList = this.channelList.concat([channel])
+      .then(res => res.json())
+      .then(raw => {
+        this.setChannelList(token)
+        return raw.channel[0]._id
       })
+      .then(id => Router.push(`/channel?id=${id}`))
   }
 
   @action
   public setChannelList(token: string): void {
     this.awaitingResponse = true
     // TODO Handle channels and subscriptions responses
-    Promise.all([
-      fetch(`http://localhost/v1/channels`, {
-        mode: "no-cors",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        credentials: "same-origin",
-      }),
-      fetch(`http://localhost/v1/user/subscriptions`, {
-        mode: "no-cors",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        credentials: "same-origin",
-      }),
-    ])
-      .then(([channels_r, subscriptions_r]) => {
-        if (channels_r.ok && subscriptions_r.ok) {
-          return { channels: channels_r.json(), subs: subscriptions_r.json() }
+    fetch(`http://localhost/v1/channels`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    })
+      .then(channels_r => {
+        if (channels_r.ok) {
+          return channels_r.json()
         } else {
-          return {
-            channels: this.channelList,
-            subs: this.channelList.filter(ch => ch.subscriptionOn),
-          }
+          return { channels: this.channelList }
         }
       })
+      .then(res => res.channels)
       .then(obj => {
-        this.channelList = obj.channels.map(ch => ({
-          id: ch.id,
+        this.channelList = obj.map(ch => ({
+          id: ch._id,
           name: ch.name,
-          subscriptionOn: obj.subs.filter(s => s.id == ch.id).length > 0,
+          description: ch.description,
         }))
       })
       .then(() => (this.awaitingResponse = false))
@@ -120,7 +100,7 @@ export class ChannelStore {
 
   @action
   public setChannel(
-    channel_id: number,
+    channel_id: string,
     token: string,
     count: number,
     start: number,
@@ -129,20 +109,17 @@ export class ChannelStore {
     this.messages = []
 
     this.awaitingResponse = true
-    fetch(`http://localhost/v1/messages`, {
-      mode: "no-cors",
-      method: "GET",
-      body: JSON.stringify({
-        channel_id,
-        start,
-        count,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
+    fetch(
+      `http://localhost/v1/messages?channel_id=${channel_id}&start=${start}&count=${count}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: token,
+        },
       },
-      credentials: "same-origin",
-    })
+    )
       .then(res => res.json())
       .then(raw_array => (this.messages = raw_array))
       .then(() => (this.awaitingResponse = false))

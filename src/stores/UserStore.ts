@@ -1,5 +1,6 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
+import Router from "next/router"
 
 export interface User {
   username: string
@@ -10,7 +11,12 @@ export interface User {
 
 export class UserStore {
   @observable
-  private user: User = null
+  private user: User = {
+    username: null,
+    firstName: null,
+    lastName: null,
+    email: null,
+  }
 
   @observable
   private token: string
@@ -27,11 +33,6 @@ export class UserStore {
   }
 
   @computed
-  public get loginSuccess(): boolean {
-    return this.loginSuccessful
-  }
-
-  @computed
   public get currentUser(): User {
     return this.user
   }
@@ -43,54 +44,41 @@ export class UserStore {
 
   @action
   public login(email: string, password: string): void {
-    fetch(`http://localhost/v1/user/login`, {
-      mode: "no-cors",
+    fetch(`http://localhost/v1/users/login`, {
       method: "POST",
       body: JSON.stringify({
-        email: email,
-        password: password,
+        user: {
+          email,
+          password,
+        },
       }),
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      credentials: "same-origin",
     })
-      .then(
-        response => {
-          response.json()
-          this.loginSuccessful = true
-        },
-        error => {
-          this.loginSuccessful = false
-          this.error = error
-        },
-      )
+      .then(response => response.json())
       .then(res => {
-        if (this.loginSuccessful) {
-          this.user = {
-            lastName: res.user.last_name,
-            username: res.user.username,
-            firstName: res.user.first_name,
-            email: res.user.email,
-          }
-          this.token = res.user.token
-        } else {
-          this.user = null
-          this.token = null
+        this.token = "Token " + res.user.token
+        this.user = {
+          email: res.user.email,
+          username: res.user.username,
+          firstName: res.user.first_name,
+          lastName: res.user.last_name,
         }
+        Router.push("/")
       })
   }
 
   @action
   public logout(): void {
-    fetch(`http://localhost/v1/user/logout`, {
-      mode: "no-cors",
+    fetch(`http://localhost/v1/users/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         Authorization: this.token,
       },
-      credentials: "same-origin",
     })
       .then(response => response.json(), error => error.message)
       .then(() => {
@@ -114,44 +102,38 @@ export class UserStore {
       }),
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
     })
-      .then(
-        response => {
-          response.body
-        },
-        error => error.message,
-      )
+      .then(response => response.json())
       .then(res => {
-        console.log(res)
-        this.token = res.user.token
+        this.token = "Token " + res.user.token
         this.user = {
           email: res.user.email,
           username: res.user.username,
           firstName: res.user.first_name,
           lastName: res.user.last_name,
         }
-        window.location.replace("/")
+        Router.push("/")
       })
   }
 
   @action
   public resetPassword(email: string) {
-    fetch(`http://localhost/v1/user/reset-password`, {
-      mode: "no-cors",
+    fetch(`http://localhost/v1/users/reset-password`, {
       method: "GET",
       body: JSON.stringify({ email }),
       headers: {
         "Content-Type": "application/json",
+        Authorization: this.token,
+        Accept: "application/json",
       },
-      credentials: "same-origin",
     }).then(response => response.json(), error => error.message)
   }
 
   @action
   public updateUser(user: User): void {
-    fetch(`http://localhost/v1/user`, {
-      mode: "no-cors",
+    fetch(`http://localhost/v1/users`, {
       method: "PUT",
       body: JSON.stringify({
         username: user.username,
@@ -161,9 +143,9 @@ export class UserStore {
       }),
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         Authorization: this.token,
       },
-      credentials: "same-origin",
     })
       .then(response => response.json(), error => error.message)
       .then(

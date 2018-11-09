@@ -49,13 +49,12 @@ export class HashtagStore {
   public setHashtagList(token: string): void {
     this.awaitingResponse = true
     fetch(`http://localhost/v1/hashtags`, {
-      mode: "no-cors",
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         Authorization: token,
       },
-      credentials: "same-origin",
     })
       .then(res => res.json())
       .then(raw_array => (this.hashtagList = raw_array))
@@ -71,7 +70,6 @@ export class HashtagStore {
   ): void {
     this.awaitingResponse = true
     fetch(`http://localhost/v1/messages`, {
-      mode: "no-cors",
       method: "GET",
       body: JSON.stringify({
         hashtag,
@@ -80,9 +78,9 @@ export class HashtagStore {
       }),
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         Authorization: token,
       },
-      credentials: "same-origin",
     })
       .then(res => res.json())
       .then(raw_array => (this.messages = raw_array))
