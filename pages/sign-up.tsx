@@ -15,6 +15,7 @@ import {
   Theme,
 } from "@material-ui/core/styles"
 import Link from "next/link"
+import Router from "next/router"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -85,10 +86,10 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     password_confirmation: "",
   }
 
-  handleSubmit = (event: React.FormEvent) => {
+  handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     if (this.validateForm()) {
-      this.props.userStore.createUser(
+      const response = await this.props.userStore.createUser(
         {
           email: this.state.email,
           username: this.state.username,
@@ -97,6 +98,11 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         },
         this.state.password,
       )
+      if (response.status == 200) {
+        Router.push("/")
+      } else {
+        alert("error when logging in")
+      }
     } else {
       // Show errors
       alert("Passwords do not match")

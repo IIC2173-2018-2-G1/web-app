@@ -81,12 +81,7 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   }
 
   componentWillMount() {
-    this.props.channelStore.setChannel(
-      this.props.id,
-      this.props.userStore.currentToken,
-      0,
-      50,
-    )
+    this.props.channelStore.setChannel(this.props.id, 0, 50)
   }
 
   componentDidMount() {

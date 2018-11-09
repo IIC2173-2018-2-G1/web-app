@@ -1,6 +1,5 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
-import Router from "next/router"
 
 export interface User {
   username: string
@@ -24,9 +23,6 @@ export class UserStore {
   @observable
   private error: string
 
-  @observable
-  private loginSuccessful: boolean = false
-
   @computed
   public get currentError(): string {
     return this.error
@@ -43,8 +39,8 @@ export class UserStore {
   }
 
   @action
-  public login(email: string, password: string): void {
-    fetch(`http://localhost/v1/users/login`, {
+  public async login(email: string, password: string): Promise<any> {
+    return fetch(`http://localhost/v1/users/login`, {
       method: "POST",
       body: JSON.stringify({
         user: {
@@ -60,14 +56,16 @@ export class UserStore {
       .then(response => response.json())
       .then(res => {
         this.token = "Token " + res.user.token
+        localStorage.setItem("token", this.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
           firstName: res.user.first_name,
           lastName: res.user.last_name,
         }
-        Router.push("/")
+        return { status: 200 }
       })
+      .catch((e: Error) => ({ status: `error: ${e}` }))
   }
 
   @action
@@ -77,7 +75,7 @@ export class UserStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: this.token,
+        Authorization: localStorage.getItem("token"),
       },
     })
       .then(response => response.json(), error => error.message)
@@ -88,8 +86,8 @@ export class UserStore {
   }
 
   @action
-  public createUser(user: User, password: string): void {
-    fetch(`http://localhost/v1/users`, {
+  public async createUser(user: User, password: string): Promise<any> {
+    return fetch(`http://localhost/v1/users`, {
       method: "POST",
       body: JSON.stringify({
         user: {
@@ -108,24 +106,50 @@ export class UserStore {
       .then(response => response.json())
       .then(res => {
         this.token = "Token " + res.user.token
+        localStorage.setItem("token", this.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
           firstName: res.user.first_name,
           lastName: res.user.last_name,
         }
-        Router.push("/")
+        return { status: 200 }
       })
+      .catch((e: Error) => ({ status: `error: ${e}` }))
+  }
+
+  @action
+  public setCurrentUser() {
+    fetch(`http://localhost/v1/users/current`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+        Accept: "application/json",
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        this.token = "Token " + res.user.token
+        localStorage.setItem("token", this.token)
+        this.user = {
+          email: res.user.email,
+          username: res.user.username,
+          firstName: res.user.first_name,
+          lastName: res.user.last_name,
+        }
+        return { status: 200 }
+      })
+      .catch((e: Error) => ({ status: `error: ${e}` }))
   }
 
   @action
   public resetPassword(email: string) {
-    fetch(`http://localhost/v1/users/reset-password`, {
+    fetch(`http://localhost/v1/users/reset-password?email=${email}`, {
       method: "GET",
-      body: JSON.stringify({ email }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: this.token,
+        Authorization: localStorage.getItem("token"),
         Accept: "application/json",
       },
     }).then(response => response.json(), error => error.message)
@@ -144,7 +168,7 @@ export class UserStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: this.token,
+        Authorization: localStorage.getItem("token"),
       },
     })
       .then(response => response.json(), error => error.message)

@@ -48,7 +48,7 @@ export class ChannelStore {
   }
 
   @action
-  public addChannel(newChannel: Channel, token: string): void {
+  public addChannel(newChannel: Channel): void {
     fetch(`http://localhost/v1/channels`, {
       method: "POST",
       body: JSON.stringify({
@@ -58,26 +58,26 @@ export class ChannelStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     })
       .then(res => res.json())
       .then(raw => {
-        this.setChannelList(token)
+        this.setChannelList()
         return raw.channel[0]._id
       })
       .then(id => Router.push(`/channel?id=${id}`))
   }
 
   @action
-  public setChannelList(token: string): void {
+  public setChannelList(): void {
     this.awaitingResponse = true
     // TODO Handle channels and subscriptions responses
     fetch(`http://localhost/v1/channels`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     })
       .then(channels_r => {
@@ -99,12 +99,7 @@ export class ChannelStore {
   }
 
   @action
-  public setChannel(
-    channel_id: string,
-    token: string,
-    count: number,
-    start: number,
-  ): void {
+  public setChannel(channel_id: string, count: number, start: number): void {
     this.channel = this.channelList.filter(ch => ch.id == channel_id)[0]
     this.messages = []
 
@@ -116,7 +111,7 @@ export class ChannelStore {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: token,
+          Authorization: localStorage.getItem("token"),
         },
       },
     )

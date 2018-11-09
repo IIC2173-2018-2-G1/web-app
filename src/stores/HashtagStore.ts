@@ -2,7 +2,7 @@ import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
 
 export interface Hashtag {
-  id: number
+  id: string
   name: string
 }
 
@@ -46,42 +46,41 @@ export class HashtagStore {
   }
 
   @action
-  public setHashtagList(token: string): void {
+  public setHashtagList(): void {
     this.awaitingResponse = true
     fetch(`http://localhost/v1/hashtags`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     })
       .then(res => res.json())
-      .then(raw_array => (this.hashtagList = raw_array))
+      .then(
+        raw_array =>
+          (this.hashtagList = raw_array.hashtags.map(hs => ({
+            id: hs._id,
+            name: hs.name,
+          }))),
+      )
       .then(() => (this.awaitingResponse = false))
   }
 
   @action
-  public getMessages(
-    hashtag: string,
-    token: string,
-    start: number,
-    count: number,
-  ): void {
+  public getMessages(hashtag: string, start: number, count: number): void {
     this.awaitingResponse = true
-    fetch(`http://localhost/v1/messages`, {
-      method: "GET",
-      body: JSON.stringify({
-        hashtag,
-        start,
-        count,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: token,
+    fetch(
+      `http://localhost/v1/messages?hashtag=${hashtag}&start=${start}&count=${count}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
       },
-    })
+    )
       .then(res => res.json())
       .then(raw_array => (this.messages = raw_array))
       .then(() => (this.awaitingResponse = false))

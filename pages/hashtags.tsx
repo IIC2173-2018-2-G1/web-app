@@ -45,8 +45,8 @@ class HashtagsPage extends React.Component<
     hashtag: null,
   }
 
-  componentWillMount = () => {
-    this.props.hashtagStore.setHashtagList(this.props.userStore.currentToken)
+  componentDidMount() {
+    this.props.hashtagStore.setHashtagList()
   }
 
   handleChangeHashtag = (hashtag: { label: string; value: string }) => {
@@ -57,12 +57,7 @@ class HashtagsPage extends React.Component<
     e.preventDefault()
     // TODO handle start and count when scrolling
     if (this.state.hashtag) {
-      this.props.hashtagStore.getMessages(
-        this.state.hashtag,
-        this.props.userStore.currentToken,
-        0,
-        50,
-      )
+      this.props.hashtagStore.getMessages(this.state.hashtag.value, 0, 50)
     }
   }
 

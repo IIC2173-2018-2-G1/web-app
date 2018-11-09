@@ -82,15 +82,11 @@ class CreateChannelPage extends React.Component<
 
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    this.props.channelStore.addChannel(
-      {
-        id: null,
-        name: this.state.channelName,
-        description: this.state.channelDescription,
-        subscriptionOn: false,
-      },
-      this.props.userStore.currentToken,
-    )
+    this.props.channelStore.addChannel({
+      id: null,
+      name: this.state.channelName,
+      description: this.state.channelDescription,
+    })
     this.setState({ channelDescription: "", channelName: "" })
   }
 

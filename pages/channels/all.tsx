@@ -66,8 +66,8 @@ class BrowseChannelsPage extends React.Component<
   BrowseChannelsPageProps,
   BrowseChannelsPageState
 > {
-  componentWillMount() {
-    this.props.channelStore.setChannelList(this.props.userStore.currentToken)
+  componentDidMount() {
+    this.props.channelStore.setChannelList()
   }
 
   render() {

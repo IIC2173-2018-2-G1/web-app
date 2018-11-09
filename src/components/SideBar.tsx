@@ -81,10 +81,13 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
   }
 
   componentDidMount() {
-    if (!this.props.userStore.currentUser.username) {
+    if (
+      (window.localStorage && !localStorage.getItem("token")) ||
+      !this.props.userStore.currentUser.username
+    ) {
       Router.push("/login")
     }
-    this.props.channelStore.setChannelList(this.props.userStore.currentToken)
+    this.props.channelStore.setChannelList()
   }
 
   handleUsernameClick = () => {

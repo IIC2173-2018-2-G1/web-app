@@ -19,6 +19,7 @@ import {
   Theme,
 } from "@material-ui/core/styles"
 import Link from "next/link"
+import Router from "next/router"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -83,10 +84,18 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
     remember: false,
   }
 
-  handleSubmit = event => {
+  handleSubmit = async event => {
     event.preventDefault()
     if (this.validateForm()) {
-      this.props.userStore.login(this.state.email, this.state.password)
+      const response = await this.props.userStore.login(
+        this.state.email,
+        this.state.password,
+      )
+      if (response.status == 200) {
+        Router.push("/")
+      } else {
+        alert("error when logging in")
+      }
     } else {
       // TODO Show errors
     }
