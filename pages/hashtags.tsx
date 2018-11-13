@@ -1,4 +1,5 @@
 import React from "react"
+import { inject, observer } from "mobx-react"
 import Layout from "../src/components/Layout"
 import List from "@material-ui/core/List"
 import Message from "../src/components/Message"
@@ -10,6 +11,8 @@ import {
   WithStyles,
   Theme,
 } from "@material-ui/core/styles"
+import { HashtagStore } from "../src/stores/HashtagStore"
+import { UserStore } from "../src/stores/UserStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -22,43 +25,18 @@ const styles = (theme: Theme) =>
     },
   })
 
-const knownHashtags = [
-  "hashtag1",
-  "hashtag2",
-  "hashtag3",
-  "hashtag4",
-  "hashtag5",
-  "hashtag6",
-  "hashtag7",
-  "hashtag8",
-  "hashtag9",
-  "hashtag10",
-  "hashtag11",
-]
-
-const messages = [
-  { id: 1, content: "mensaje1", username: "dacasas" },
-  { id: 2, content: "mensaje2", username: "dacasas" },
-  { id: 3, content: "mensaje3", username: "dacasas" },
-  { id: 4, content: "mensaje4", username: "dacasas" },
-  { id: 5, content: "mensaje5", username: "dacasas" },
-  { id: 6, content: "mensaje6", username: "dacasas" },
-  { id: 7, content: "mensaje7", username: "dacasas" },
-  { id: 8, content: "mensaje8", username: "dacasas" },
-  { id: 9, content: "mensaje9", username: "dacasas" },
-  { id: 10, content: "mensaje10", username: "dacasas" },
-  { id: 11, content: "mensaje11", username: "dacasas" },
-  { id: 12, content: "mensaje12", username: "dacasas" },
-  { id: 13, content: "mensaje13", username: "dacasas" },
-  { id: 14, content: "mensaje14", username: "dacasas" },
-]
-
-export interface HashtagsPageProps extends WithStyles<typeof styles> {}
+export interface HashtagsPageProps extends WithStyles<typeof styles> {
+  hashtagStore?: HashtagStore
+  userStore?: UserStore
+}
 
 export interface HashtagsPageState {
   hashtag: { label: string; value: string }
 }
 
+@inject("hashtagStore")
+@inject("userStore")
+@observer
 class HashtagsPage extends React.Component<
   HashtagsPageProps,
   HashtagsPageState
@@ -67,15 +45,20 @@ class HashtagsPage extends React.Component<
     hashtag: null,
   }
 
+  componentDidMount() {
+    this.props.hashtagStore.setHashtagList()
+  }
+
   handleChangeHashtag = (hashtag: { label: string; value: string }) => {
     this.setState({ hashtag })
   }
 
   handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(
-      `Search: ${this.state.hashtag ? this.state.hashtag.value : null}`,
-    )
+    // TODO handle start and count when scrolling
+    if (this.state.hashtag) {
+      this.props.hashtagStore.getMessages(this.state.hashtag.value, 0, 50)
+    }
   }
 
   render() {
@@ -84,7 +67,9 @@ class HashtagsPage extends React.Component<
     return (
       <Layout>
         <AutoCompleteSearch
-          options={knownHashtags}
+          options={this.props.hashtagStore.currentHashtagList.map(
+            hs => hs.name,
+          )}
           handleSearch={this.handleSearch}
           handleChange={this.handleChangeHashtag}
           hashtag={this.state.hashtag}
@@ -92,8 +77,8 @@ class HashtagsPage extends React.Component<
           label="Hashtag"
         />
         <List className={classes.messageList}>
-          {messages.length > 0 ? (
-            messages.map((msg, ix) => (
+          {this.props.hashtagStore.currentMessages.length > 0 ? (
+            this.props.hashtagStore.currentMessages.map((msg, ix) => (
               <Message
                 key={msg.id}
                 content={`${ix}. ${msg.content}`}

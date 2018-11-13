@@ -10,10 +10,23 @@ export interface User {
 
 export class UserStore {
   @observable
-  private user: User
+  private user: User = {
+    username: null,
+    firstName: null,
+    lastName: null,
+    email: null,
+  }
 
   @observable
   private token: string
+
+  @observable
+  private error: string
+
+  @computed
+  public get currentError(): string {
+    return this.error
+  }
 
   @computed
   public get currentUser(): User {
@@ -26,82 +39,132 @@ export class UserStore {
   }
 
   @action
-  public login(email: string, password: string): void {
-    fetch("http://charette1.ing.puc.cl/user/login", {
+  public async login(email: string, password: string): Promise<any> {
+    return fetch(`http://localhost/v1/users/login`, {
       method: "POST",
       body: JSON.stringify({
-        email: email,
-        password: password,
+        user: {
+          email,
+          password,
+        },
       }),
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      credentials: "same-origin",
     })
-      .then(response => response.json(), error => error.message)
+      .then(response => response.json())
       .then(res => {
+        this.token = "Token " + res.user.token
+        localStorage.setItem("token", this.token)
         this.user = {
-          lastName: res.user.last_name,
+          email: res.user.email,
           username: res.user.username,
           firstName: res.user.first_name,
-          email: res.user.email,
+          lastName: res.user.last_name,
         }
-        this.token = res.user.token
+        return { status: 200 }
       })
+      .catch((e: Error) => ({ status: `error: ${e}` }))
   }
 
   @action
   public logout(): void {
-    fetch("http://charette1.ing.puc.cl/user/logout", {
+    fetch(`http://localhost/v1/users/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: this.token,
+        Accept: "application/json",
+        Authorization: localStorage.getItem("token"),
       },
-      credentials: "same-origin",
     })
       .then(response => response.json(), error => error.message)
       .then(() => {
         this.user = null
         this.token = null
+        localStorage.clear()
       })
   }
 
   @action
-  public createUser(user: User, password: string): void {
-    fetch("http://charette1.ing.puc.cl/users", {
+  public async createUser(user: User, password: string): Promise<any> {
+    return fetch(`http://localhost/v1/users`, {
       method: "POST",
       body: JSON.stringify({
-        username: user.username,
-        first_name: user.firstName,
-        last_name: user.lastName,
-        email: user.email,
-        password: password,
+        user: {
+          username: user.username,
+          first_ame: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+          password: password,
+        },
       }),
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      credentials: "same-origin",
     })
-      .then(response => response.json(), error => error.message)
-      .then(user => this.login(user.email, password))
+      .then(response => response.json())
+      .then(res => {
+        this.token = "Token " + res.user.token
+        localStorage.setItem("token", this.token)
+        this.user = {
+          email: res.user.email,
+          username: res.user.username,
+          firstName: res.user.first_name,
+          lastName: res.user.last_name,
+        }
+        return { status: 200 }
+      })
+      .catch((e: Error) => ({ status: `error: ${e}` }))
+  }
+
+  @action
+  public async setCurrentUser(): Promise<any> {
+    return fetch(`http://localhost/v1/users/current`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+        Accept: "application/json",
+      },
+    })
+      .then(r => {
+        if (!r.ok) {
+          throw `${r.status}`
+        }
+        return r
+      })
+      .then(response => response.json())
+      .then(res => {
+        this.token = "Token " + res.user.token
+        localStorage.setItem("token", this.token)
+        this.user = {
+          email: res.user.email,
+          username: res.user.username,
+          firstName: res.user.first_name,
+          lastName: res.user.last_name,
+        }
+        return { status: 200 }
+      })
+      .catch((e: Error) => ({ status: `${e}`, message: "error :(" }))
   }
 
   @action
   public resetPassword(email: string) {
-    fetch("http://charette1.ing.puc.cl/user/reset-password", {
+    fetch(`http://localhost/v1/users/reset-password?email=${email}`, {
       method: "GET",
-      body: JSON.stringify({ email }),
       headers: {
         "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+        Accept: "application/json",
       },
-      credentials: "same-origin",
     }).then(response => response.json(), error => error.message)
   }
 
   @action
   public updateUser(user: User): void {
-    fetch("http://charette1.ing.puc.cl/user", {
+    fetch(`http://localhost/v1/users`, {
       method: "PUT",
       body: JSON.stringify({
         username: user.username,
@@ -111,11 +174,17 @@ export class UserStore {
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: this.token,
+        Accept: "application/json",
+        Authorization: localStorage.getItem("token"),
       },
-      credentials: "same-origin",
     })
-      .then(response => response.json(), error => error.message)
+      .then(r => {
+        if (!r.ok) {
+          throw `${r.status}`
+        }
+        return r
+      })
+      .then(response => response.json())
       .then(
         user =>
           (this.user = {
@@ -125,5 +194,6 @@ export class UserStore {
             email: user.email,
           }),
       )
+      .catch((e: Error) => ({ status: `${e}`, message: "error :(" }))
   }
 }

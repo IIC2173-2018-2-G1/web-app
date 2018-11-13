@@ -1,11 +1,11 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
+import Router from "next/router"
 
 export interface Channel {
-  id: number
+  id: string
   name: string
   description: string
-  subscriptionOn: boolean
 }
 
 export interface Message {
@@ -48,109 +48,78 @@ export class ChannelStore {
   }
 
   @action
-  public addChannel(newChannel: Channel, token: string): void {
-    fetch("http://charette1.ing.puc.cl/channels", {
+  public addChannel(newChannel: Channel): void {
+    fetch(`http://localhost/v1/channels`, {
       method: "POST",
       body: JSON.stringify({
         name: newChannel.name,
-        descirption: newChannel.description,
+        description: newChannel.description,
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Accept: "application/json",
+        Authorization: localStorage.getItem("token"),
       },
-      credentials: "same-origin",
     })
-      .then(response => response.json(), error => error.message)
-      .then(ch => {
-        let channel = {
-          id: ch.id,
-          name: ch.name,
-          description: ch.description,
-          subscriptionOn: false,
-        }
-        this.channelList = this.channelList.concat([channel])
+      .then(res => res.json())
+      .then(raw => {
+        this.setChannelList()
+        return raw.channel[0]._id
       })
+      .then(id => Router.push(`/channels?id=${id}`))
+      .catch(() => alert("Error creating a channel"))
   }
 
   @action
-  public setChannelList(token: string): void {
-    this.channelList = []
-    this.channelList = [
-      { description: "", subscriptionOn: false, name: "channel one", id: 1 },
-      { description: "", subscriptionOn: false, name: "channel two", id: 2 },
-      { description: "", subscriptionOn: false, name: "channel three", id: 3 },
-      { description: "", subscriptionOn: false, name: "channel four", id: 4 },
-      { description: "", subscriptionOn: false, name: "channel five", id: 5 },
-      { description: "", subscriptionOn: false, name: "channel six", id: 6 },
-      { description: "", subscriptionOn: false, name: "channel seven", id: 7 },
-      { description: "", subscriptionOn: false, name: "channel eight", id: 8 },
-      { description: "", subscriptionOn: false, name: "channel nine", id: 9 },
-      { description: "", subscriptionOn: false, name: "channel ten", id: 10 },
-    ]
+  public setChannelList(): void {
     this.awaitingResponse = true
     // TODO Handle channels and subscriptions responses
-    Promise.all([
-      fetch("http://charette1.ing.puc.cl/channels", {
-        mode: "no-cors",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        credentials: "same-origin",
-      }),
-      fetch("http://charette1.ing.puc.cl/user/subscriptions", {
-        mode: "no-cors",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        credentials: "same-origin",
-      }),
-    ])
-      .then(([channels_r, subscriptions_r]) => {
-        if (channels_r.ok && subscriptions_r.ok) {
-          return { channels: channels_r.json(), subs: subscriptions_r.json() }
+    fetch(`http://localhost/v1/channels`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+      .then(channels_r => {
+        if (channels_r.ok) {
+          return channels_r.json()
         } else {
-          return {
-            channels: this.channelList,
-            subs: this.channelList.filter(ch => ch.subscriptionOn),
-          }
+          return { channels: this.channelList }
         }
       })
+      .then(res => res.channels)
       .then(obj => {
-        this.channelList = obj.channels.map(ch => ({
-          id: ch.id,
+        this.channelList = obj.map(ch => ({
+          id: ch._id,
           name: ch.name,
-          subscriptionOn: obj.subs.filter(s => s.id == ch.id).length > 0,
+          description: ch.description,
         }))
       })
       .then(() => (this.awaitingResponse = false))
+      .catch(() => alert("Error getting channels"))
   }
 
   @action
-  public setChannel(channelID: number, token: string): void {
-    this.channel = this.channelList.filter(ch => ch.id == channelID)[0]
+  public setChannel(channel_id: string, count: number, start: number): void {
+    this.channel = this.channelList.filter(ch => ch.id == channel_id)[0]
     this.messages = []
+
     this.awaitingResponse = true
-
-    let n_messages = Math.floor(Math.random() * 30)
-
-    fetch(`https://loripsum.net/api/${n_messages}/short/plaintext`, {
-      mode: "no-cors",
-    })
-      .then(res => res.text())
-      .then(raw => raw.split(/\n\n/))
-      .then(
-        raw_array =>
-          (this.messages = raw_array.map((content, ix) => ({
-            content,
-            username: "mabucchi",
-            id: `${ix}`,
-          }))),
-      )
+    fetch(
+      `http://localhost/v1/messages?channel_id=${channel_id}&start=${start}&count=${count}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
+      },
+    )
+      .then(res => res.json())
+      .then(raw_array => (this.messages = raw_array))
       .then(() => (this.awaitingResponse = false))
+      .catch(() => alert("Error getting channel messages"))
   }
 }

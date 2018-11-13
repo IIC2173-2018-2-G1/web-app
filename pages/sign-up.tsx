@@ -14,6 +14,8 @@ import {
   WithStyles,
   Theme,
 } from "@material-ui/core/styles"
+import Link from "next/link"
+import Router from "next/router"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,6 +49,16 @@ const styles = (theme: Theme) =>
     submit: {
       marginTop: theme.spacing.unit * 3,
     },
+    bottomText: {
+      marginTop: theme.spacing.unit * 2,
+    },
+    link: {
+      color: theme.palette.primary.light,
+      "&:hover": {
+        color: theme.palette.getContrastText(theme.palette.background.default),
+        cursor: "pointer",
+      },
+    },
   })
 
 export interface SignInPageProps extends WithStyles<typeof styles> {
@@ -74,10 +86,10 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     password_confirmation: "",
   }
 
-  handleSubmit = (event: React.FormEvent) => {
+  handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     if (this.validateForm()) {
-      this.props.userStore.createUser(
+      const response = await this.props.userStore.createUser(
         {
           email: this.state.email,
           username: this.state.username,
@@ -86,8 +98,14 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         },
         this.state.password,
       )
+      if (response.status == 200) {
+        Router.push("/")
+      } else {
+        alert("error when logging in")
+      }
     } else {
       // Show errors
+      alert("Passwords do not match")
     }
   }
 
@@ -216,9 +234,17 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                 color="primary"
                 className={classes.submit}
               >
-                Sign in
+                Sign up
               </Button>
             </form>
+            <Typography className={classes.bottomText} component="p">
+              Already have an account?
+            </Typography>
+            <Link href={"/login"}>
+              <Typography className={classes.link}>
+                Login to your account!
+              </Typography>
+            </Link>
           </Paper>
         </main>
       </Layout>

@@ -66,8 +66,8 @@ class BrowseChannelsPage extends React.Component<
   BrowseChannelsPageProps,
   BrowseChannelsPageState
 > {
-  componentWillMount() {
-    this.props.channelStore.setChannelList(this.props.userStore.currentToken)
+  componentDidMount() {
+    this.props.channelStore.setChannelList()
   }
 
   render() {
@@ -100,11 +100,7 @@ class BrowseChannelsPage extends React.Component<
             </div>
           </ListSubheader>
           {this.props.channelStore.currentChannelList.map(channel => (
-            <ChannelItem
-              key={channel.id}
-              channel_id={channel.id}
-              channel_name={channel.name}
-            />
+            <ChannelItem channel_id={channel.id} channel_name={channel.name} />
           ))}
         </List>
       </Layout>

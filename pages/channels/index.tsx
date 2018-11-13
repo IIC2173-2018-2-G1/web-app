@@ -52,7 +52,7 @@ const styles = (theme: Theme) =>
   })
 
 export interface ChannelPageProps extends WithStyles<typeof styles> {
-  id: number
+  id: string
   channelStore?: ChannelStore
   userStore?: UserStore
 }
@@ -81,10 +81,7 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   }
 
   componentWillMount() {
-    this.props.channelStore.setChannel(
-      this.props.id,
-      this.props.userStore.currentToken,
-    )
+    this.props.channelStore.setChannel(this.props.id, 0, 50)
   }
 
   componentDidMount() {
@@ -110,11 +107,11 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   render() {
     const { classes } = this.props
     return (
-      <Layout pageTitle={`Channel ${this.props.id}`}>
+      <Layout pageTitle={this.props.channelStore.currentChannel.name}>
         <AppBar position="sticky" className={classes.appBar}>
           <Toolbar>
             <Typography variant="h6" className={classes.grow}>
-              Channel {this.props.id}!
+              {this.props.channelStore.currentChannel.name}!
             </Typography>
             <Tooltip TransitionComponent={Zoom} title="Show channel info">
               <IconButton aria-label="Info">

@@ -80,8 +80,20 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
     notificationTooltipOpen: false,
   }
 
-  componentWillMount() {
-    this.props.channelStore.setChannelList(this.props.userStore.currentToken)
+  async componentDidMount() {
+    if (window.localStorage && !localStorage.getItem("token")) {
+      Router.push("/login")
+    }
+
+    if (!this.props.userStore.currentUser.username) {
+      const res = await this.props.userStore.setCurrentUser()
+      console.log(res)
+      if (res.status == 401 || res.status == 404) {
+        Router.push("/login")
+      }
+    }
+
+    this.props.channelStore.setChannelList()
   }
 
   handleUsernameClick = () => {
@@ -105,7 +117,14 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
       >
         <ListItem button onClick={this.handleUsernameClick}>
           <div className={classes.container}>
-            <ListItemText primary="Username" secondary="Name Lastname" />
+            <ListItemText
+              primary={this.props.userStore.currentUser.username}
+              secondary={
+                this.props.userStore.currentUser.firstName +
+                " " +
+                this.props.userStore.currentUser.lastName
+              }
+            />
             <Tooltip
               onOpen={() => this.setState({ notificationTooltipOpen: true })}
               onClose={() => this.setState({ notificationTooltipOpen: false })}
@@ -154,11 +173,7 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
             </div>
           </ListSubheader>
           {this.props.channelStore.currentChannelList.map(channel => (
-            <ChannelItem
-              key={channel.id}
-              channel_id={channel.id}
-              channel_name={channel.name}
-            />
+            <ChannelItem channel_id={channel.id} channel_name={channel.name} />
           ))}
         </List>
         <Divider />
