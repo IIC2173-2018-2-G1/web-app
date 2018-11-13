@@ -66,7 +66,8 @@ export class ChannelStore {
         this.setChannelList()
         return raw.channel[0]._id
       })
-      .then(id => Router.push(`/channel?id=${id}`))
+      .then(id => Router.push(`/channels?id=${id}`))
+      .catch(() => alert("Error creating a channel"))
   }
 
   @action
@@ -96,6 +97,7 @@ export class ChannelStore {
         }))
       })
       .then(() => (this.awaitingResponse = false))
+      .catch(() => alert("Error getting channels"))
   }
 
   @action
@@ -118,5 +120,6 @@ export class ChannelStore {
       .then(res => res.json())
       .then(raw_array => (this.messages = raw_array))
       .then(() => (this.awaitingResponse = false))
+      .catch(() => alert("Error getting channel messages"))
   }
 }

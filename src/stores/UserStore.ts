@@ -82,6 +82,7 @@ export class UserStore {
       .then(() => {
         this.user = null
         this.token = null
+        localStorage.clear()
       })
   }
 
@@ -119,8 +120,8 @@ export class UserStore {
   }
 
   @action
-  public setCurrentUser() {
-    fetch(`http://localhost/v1/users/current`, {
+  public async setCurrentUser(): Promise<any> {
+    return fetch(`http://localhost/v1/users/current`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -128,6 +129,12 @@ export class UserStore {
         Accept: "application/json",
       },
     })
+      .then(r => {
+        if (!r.ok) {
+          throw `${r.status}`
+        }
+        return r
+      })
       .then(response => response.json())
       .then(res => {
         this.token = "Token " + res.user.token
@@ -140,7 +147,7 @@ export class UserStore {
         }
         return { status: 200 }
       })
-      .catch((e: Error) => ({ status: `error: ${e}` }))
+      .catch((e: Error) => ({ status: `${e}`, message: "error :(" }))
   }
 
   @action
@@ -171,7 +178,13 @@ export class UserStore {
         Authorization: localStorage.getItem("token"),
       },
     })
-      .then(response => response.json(), error => error.message)
+      .then(r => {
+        if (!r.ok) {
+          throw `${r.status}`
+        }
+        return r
+      })
+      .then(response => response.json())
       .then(
         user =>
           (this.user = {
@@ -181,5 +194,6 @@ export class UserStore {
             email: user.email,
           }),
       )
+      .catch((e: Error) => ({ status: `${e}`, message: "error :(" }))
   }
 }

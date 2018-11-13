@@ -107,11 +107,11 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   render() {
     const { classes } = this.props
     return (
-      <Layout pageTitle={`Channel ${this.props.id}`}>
+      <Layout pageTitle={this.props.channelStore.currentChannel.name}>
         <AppBar position="sticky" className={classes.appBar}>
           <Toolbar>
             <Typography variant="h6" className={classes.grow}>
-              Channel {this.props.id}!
+              {this.props.channelStore.currentChannel.name}!
             </Typography>
             <Tooltip TransitionComponent={Zoom} title="Show channel info">
               <IconButton aria-label="Info">

@@ -80,13 +80,19 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
     notificationTooltipOpen: false,
   }
 
-  componentDidMount() {
-    if (
-      (window.localStorage && !localStorage.getItem("token")) ||
-      !this.props.userStore.currentUser.username
-    ) {
+  async componentDidMount() {
+    if (window.localStorage && !localStorage.getItem("token")) {
       Router.push("/login")
     }
+
+    if (!this.props.userStore.currentUser.username) {
+      const res = await this.props.userStore.setCurrentUser()
+      console.log(res)
+      if (res.status == 401 || res.status == 404) {
+        Router.push("/login")
+      }
+    }
+
     this.props.channelStore.setChannelList()
   }
 

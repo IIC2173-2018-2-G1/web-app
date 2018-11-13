@@ -65,6 +65,7 @@ export class HashtagStore {
           }))),
       )
       .then(() => (this.awaitingResponse = false))
+      .catch(() => alert("Error getting hashtags"))
   }
 
   @action
@@ -84,5 +85,6 @@ export class HashtagStore {
       .then(res => res.json())
       .then(raw_array => (this.messages = raw_array))
       .then(() => (this.awaitingResponse = false))
+      .catch(() => alert("Error getting hashtag messages"))
   }
 }
