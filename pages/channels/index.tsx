@@ -21,6 +21,7 @@ import TextField from "@material-ui/core/TextField"
 import Layout from "../../src/components/Layout"
 import Message from "../../src/components/Message"
 import { ChannelStore } from "../../src/stores/ChannelStore"
+import { UserStore } from "../../src/stores/UserStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,6 +54,7 @@ const styles = (theme: Theme) =>
 export interface ChannelPageProps extends WithStyles<typeof styles> {
   id: number
   channelStore?: ChannelStore
+  userStore?: UserStore
 }
 
 export interface ChannelPageState {
@@ -61,6 +63,7 @@ export interface ChannelPageState {
 }
 
 @inject("channelStore")
+@inject("userStore")
 @observer
 class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   private listEnd: Element
@@ -78,7 +81,10 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   }
 
   componentWillMount() {
-    this.props.channelStore.setChannel(this.props.id)
+    this.props.channelStore.setChannel(
+      this.props.id,
+      this.props.userStore.currentToken,
+    )
   }
 
   componentDidMount() {
@@ -134,10 +140,10 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
         </AppBar>
         <List className={classes.messageList}>
           <div className={classes.listEnd} ref={el => (this.listEnd = el)} />
-          {this.props.channelStore.currentMessages.map((msg, ix) => (
+          {this.props.channelStore.currentMessages.map(msg => (
             <Message
               key={msg.id}
-              content={`${ix}. ${msg.content}`}
+              content={msg.content}
               username={msg.username}
               actionBar={true}
             />
