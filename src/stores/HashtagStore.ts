@@ -1,5 +1,6 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
+import Router from "next/router"
 
 export interface Hashtag {
   id: string

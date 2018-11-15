@@ -18,25 +18,9 @@ export class UserStore {
     email: null,
   }
 
-  @observable
-  private token: string = ""
-
-  @observable
-  private error: string = ""
-
-  @computed
-  public get currentError(): string {
-    return this.error
-  }
-
   @computed
   public get currentUser(): User {
     return this.user
-  }
-
-  @computed
-  public get currentToken(): string {
-    return this.token
   }
 
   @action
@@ -63,8 +47,7 @@ export class UserStore {
       })
       .then(response => response.json())
       .then(res => {
-        this.token = "Token " + res.user.token
-        window.localStorage.setItem("token", this.token)
+        window.localStorage.setItem("token", "Token " + res.user.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
@@ -95,8 +78,12 @@ export class UserStore {
       })
       .then(response => response.json(), error => error.message)
       .then(() => {
-        this.user = null
-        this.token = null
+        this.user = {
+          username: null,
+          firstName: null,
+          lastName: null,
+          email: null,
+        }
         window.localStorage.clear()
       })
   }
@@ -128,8 +115,7 @@ export class UserStore {
       })
       .then(response => response.json())
       .then(res => {
-        this.token = "Token " + res.user.token
-        window.localStorage.setItem("token", this.token)
+        window.localStorage.setItem("token", "Token " + res.user.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
@@ -166,13 +152,12 @@ export class UserStore {
       })
       .then(response => response.json())
       .then(res => {
-        this.token = "Token " + res.user.token
-        window.localStorage.setItem("token", this.token)
+        let parsed_user = JSON.parse(res.user)
         this.user = {
-          email: res.user.email,
-          username: res.user.username,
-          firstName: res.user.first_name,
-          lastName: res.user.last_name,
+          email: parsed_user.email,
+          username: parsed_user.username,
+          firstName: parsed_user.first_name,
+          lastName: parsed_user.last_name,
         }
         return { status: 200 }
       })
