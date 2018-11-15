@@ -98,7 +98,11 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
 
   handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.keyCode == 13 && !e.shiftKey) {
-      // enter and no shift pressed
+      this.props.channelStore.sendMessage(
+        this.props.id,
+        this.state.newMessageInput,
+        null,
+      )
       e.preventDefault()
       this.setState({ newMessageInput: "" })
     }

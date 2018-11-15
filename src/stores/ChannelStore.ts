@@ -67,7 +67,7 @@ export class ChannelStore {
         return raw.channel[0]._id
       })
       .then(id => Router.push(`/channels?id=${id}`))
-      .catch(() => alert("Error creating a channel"))
+      .catch(e => alert(`Error creating a channel: ${e}`))
   }
 
   @action
@@ -97,7 +97,7 @@ export class ChannelStore {
         }))
       })
       .then(() => (this.awaitingResponse = false))
-      .catch(() => alert("Error getting channels"))
+      .catch(e => alert(`Error getting channels: ${e}`))
   }
 
   @action
@@ -107,7 +107,7 @@ export class ChannelStore {
 
     this.awaitingResponse = true
     fetch(
-      `http://localhost/v1/messages?channel_id=${channel_id}&start=${start}&count=${count}`,
+      `http://localhost/v1/messages?channel_id=${1234}&start=${start}&count=${count}`,
       {
         method: "GET",
         headers: {
@@ -118,8 +118,41 @@ export class ChannelStore {
       },
     )
       .then(res => res.json())
-      .then(raw_array => (this.messages = raw_array))
+      .then(res => {
+        if (res.Error != "") {
+          throw res.Error
+        } else {
+          this.messages = res.messages.map(m => ({
+            id: m.id,
+            content: m.content,
+            username: m.username,
+          }))
+        }
+      })
       .then(() => (this.awaitingResponse = false))
-      .catch(() => alert("Error getting channel messages"))
+      .catch(e => alert(`Error getting channel messages: ${e}`))
+  }
+
+  @action
+  public sendMessage(
+    channel_id: string,
+    content: string,
+    response_to: string,
+  ): void {
+    fetch(`http://localhost/v1/messages`, {
+      method: "POST",
+      body: JSON.stringify({
+        channel_id,
+        content,
+        response_to,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+      .then(() => this.setChannel(channel_id, 50, 0))
+      .catch(e => alert(`Error sending message: ${e}`))
   }
 }
