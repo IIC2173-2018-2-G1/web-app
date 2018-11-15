@@ -87,7 +87,6 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
 
     if (!this.props.userStore.currentUser.username) {
       const res = await this.props.userStore.setCurrentUser()
-      console.log(res)
       if (res.status == 401 || res.status == 404) {
         Router.push("/login")
       }
@@ -173,7 +172,11 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
             </div>
           </ListSubheader>
           {this.props.channelStore.currentChannelList.map(channel => (
-            <ChannelItem channel_id={channel.id} channel_name={channel.name} />
+            <ChannelItem
+              key={channel.id}
+              channel_id={channel.id}
+              channel_name={channel.name}
+            />
           ))}
         </List>
         <Divider />

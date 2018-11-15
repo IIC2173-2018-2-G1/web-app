@@ -1,5 +1,6 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
+import Router from "next/router"
 
 export interface User {
   username: string
@@ -17,25 +18,9 @@ export class UserStore {
     email: null,
   }
 
-  @observable
-  private token: string
-
-  @observable
-  private error: string
-
-  @computed
-  public get currentError(): string {
-    return this.error
-  }
-
   @computed
   public get currentUser(): User {
     return this.user
-  }
-
-  @computed
-  public get currentToken(): string {
-    return this.token
   }
 
   @action
@@ -53,10 +38,16 @@ export class UserStore {
         Accept: "application/json",
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(response => response.json())
       .then(res => {
-        this.token = "Token " + res.user.token
-        localStorage.setItem("token", this.token)
+        window.localStorage.setItem("token", "Token " + res.user.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
@@ -75,14 +66,25 @@ export class UserStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(response => response.json(), error => error.message)
       .then(() => {
-        this.user = null
-        this.token = null
-        localStorage.clear()
+        this.user = {
+          username: null,
+          firstName: null,
+          lastName: null,
+          email: null,
+        }
+        window.localStorage.clear()
       })
   }
 
@@ -104,10 +106,16 @@ export class UserStore {
         Accept: "application/json",
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(response => response.json())
       .then(res => {
-        this.token = "Token " + res.user.token
-        localStorage.setItem("token", this.token)
+        window.localStorage.setItem("token", "Token " + res.user.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
@@ -125,10 +133,17 @@ export class UserStore {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
         Accept: "application/json",
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(r => {
         if (!r.ok) {
           throw `${r.status}`
@@ -137,13 +152,13 @@ export class UserStore {
       })
       .then(response => response.json())
       .then(res => {
-        this.token = "Token " + res.user.token
-        localStorage.setItem("token", this.token)
+        let parsed_user = JSON.parse(res.user)
+        window.localStorage.setItem("token", "Token " + parsed_user.token)
         this.user = {
-          email: res.user.email,
-          username: res.user.username,
-          firstName: res.user.first_name,
-          lastName: res.user.last_name,
+          email: parsed_user.email,
+          username: parsed_user.username,
+          firstName: parsed_user.first_name,
+          lastName: parsed_user.last_name,
         }
         return { status: 200 }
       })
@@ -156,10 +171,18 @@ export class UserStore {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
         Accept: "application/json",
       },
-    }).then(response => response.json(), error => error.message)
+    })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
+      .then(response => response.json(), error => error.message)
   }
 
   @action
@@ -175,9 +198,16 @@ export class UserStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(r => {
         if (!r.ok) {
           throw `${r.status}`

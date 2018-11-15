@@ -80,11 +80,8 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
     this.setState({ subscribed: !this.state.subscribed })
   }
 
-  componentWillMount() {
-    this.props.channelStore.setChannel(this.props.id, 0, 50)
-  }
-
   componentDidMount() {
+    this.props.channelStore.setChannel(this.props.id, 0, 50)
     when(() => this.props.channelStore.loaded, this.scrollToBottom)
   }
 
@@ -98,7 +95,11 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
 
   handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.keyCode == 13 && !e.shiftKey) {
-      // enter and no shift pressed
+      this.props.channelStore.sendMessage(
+        this.props.id,
+        this.state.newMessageInput,
+        null,
+      )
       e.preventDefault()
       this.setState({ newMessageInput: "" })
     }
