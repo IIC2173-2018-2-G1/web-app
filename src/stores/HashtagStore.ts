@@ -14,7 +14,7 @@ export interface Message {
 
 export class HashtagStore {
   @observable
-  hashtag: Hashtag
+  hashtag: Hashtag = { id: null, name: "" }
 
   @observable
   hashtagList: Hashtag[] = []
@@ -53,7 +53,7 @@ export class HashtagStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
       },
     })
       .then(res => res.json())
@@ -78,7 +78,7 @@ export class HashtagStore {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: localStorage.getItem("token"),
+          Authorization: window.localStorage.getItem("token"),
         },
       },
     )

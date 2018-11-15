@@ -16,7 +16,7 @@ export interface Message {
 
 export class ChannelStore {
   @observable
-  private channel: Channel
+  private channel: Channel = { id: null, name: null, description: null }
 
   @observable
   private channelList: Channel[] = []
@@ -58,7 +58,7 @@ export class ChannelStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
       },
     })
       .then(res => res.json())
@@ -78,7 +78,7 @@ export class ChannelStore {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
       },
     })
       .then(channels_r => {
@@ -113,7 +113,7 @@ export class ChannelStore {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: localStorage.getItem("token"),
+          Authorization: window.localStorage.getItem("token"),
         },
       },
     )
@@ -149,7 +149,7 @@ export class ChannelStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
       },
     })
       .then(() => this.setChannel(channel_id, 50, 0))

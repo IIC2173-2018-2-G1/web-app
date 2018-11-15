@@ -18,10 +18,10 @@ export class UserStore {
   }
 
   @observable
-  private token: string
+  private token: string = ""
 
   @observable
-  private error: string
+  private error: string = ""
 
   @computed
   public get currentError(): string {
@@ -56,7 +56,7 @@ export class UserStore {
       .then(response => response.json())
       .then(res => {
         this.token = "Token " + res.user.token
-        localStorage.setItem("token", this.token)
+        window.localStorage.setItem("token", this.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
@@ -75,14 +75,14 @@ export class UserStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
       },
     })
       .then(response => response.json(), error => error.message)
       .then(() => {
         this.user = null
         this.token = null
-        localStorage.clear()
+        window.localStorage.clear()
       })
   }
 
@@ -107,7 +107,7 @@ export class UserStore {
       .then(response => response.json())
       .then(res => {
         this.token = "Token " + res.user.token
-        localStorage.setItem("token", this.token)
+        window.localStorage.setItem("token", this.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
@@ -125,7 +125,7 @@ export class UserStore {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
         Accept: "application/json",
       },
     })
@@ -138,7 +138,7 @@ export class UserStore {
       .then(response => response.json())
       .then(res => {
         this.token = "Token " + res.user.token
-        localStorage.setItem("token", this.token)
+        window.localStorage.setItem("token", this.token)
         this.user = {
           email: res.user.email,
           username: res.user.username,
@@ -156,7 +156,7 @@ export class UserStore {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
         Accept: "application/json",
       },
     }).then(response => response.json(), error => error.message)
@@ -175,7 +175,7 @@ export class UserStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: window.localStorage.getItem("token"),
       },
     })
       .then(r => {

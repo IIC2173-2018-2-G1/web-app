@@ -80,11 +80,8 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
     this.setState({ subscribed: !this.state.subscribed })
   }
 
-  componentWillMount() {
-    this.props.channelStore.setChannel(this.props.id, 0, 50)
-  }
-
   componentDidMount() {
+    this.props.channelStore.setChannel(this.props.id, 0, 50)
     when(() => this.props.channelStore.loaded, this.scrollToBottom)
   }
 
