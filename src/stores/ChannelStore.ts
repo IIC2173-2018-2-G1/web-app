@@ -61,13 +61,20 @@ export class ChannelStore {
         Authorization: window.localStorage.getItem("token"),
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(res => res.json())
       .then(raw => {
         this.setChannelList()
         return raw.channel[0]._id
       })
       .then(id => Router.push(`/channels?id=${id}`))
-      .catch(e => alert(`Error creating a channel: ${e}`))
+      .catch(e => console.log(`Error creating a channel: ${e}`))
   }
 
   @action
@@ -81,6 +88,13 @@ export class ChannelStore {
         Authorization: window.localStorage.getItem("token"),
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(channels_r => {
         if (channels_r.ok) {
           return channels_r.json()
@@ -97,7 +111,7 @@ export class ChannelStore {
         }))
       })
       .then(() => (this.awaitingResponse = false))
-      .catch(e => alert(`Error getting channels: ${e}`))
+      .catch(e => console.log(`Error getting channels: ${e}`))
   }
 
   @action
@@ -117,6 +131,13 @@ export class ChannelStore {
         },
       },
     )
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(res => res.json())
       .then(res => {
         if (res.Error != "") {
@@ -130,7 +151,7 @@ export class ChannelStore {
         }
       })
       .then(() => (this.awaitingResponse = false))
-      .catch(e => alert(`Error getting channel messages: ${e}`))
+      .catch(e => console.log(`Error getting channel messages: ${e}`))
   }
 
   @action
@@ -152,7 +173,14 @@ export class ChannelStore {
         Authorization: window.localStorage.getItem("token"),
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(() => this.setChannel(channel_id, 50, 0))
-      .catch(e => alert(`Error sending message: ${e}`))
+      .catch(e => console.log(`Error sending message: ${e}`))
   }
 }

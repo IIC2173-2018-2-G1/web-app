@@ -1,5 +1,6 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
+import Router from "next/router"
 
 export interface User {
   username: string
@@ -53,6 +54,13 @@ export class UserStore {
         Accept: "application/json",
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(response => response.json())
       .then(res => {
         this.token = "Token " + res.user.token
@@ -78,6 +86,13 @@ export class UserStore {
         Authorization: window.localStorage.getItem("token"),
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(response => response.json(), error => error.message)
       .then(() => {
         this.user = null
@@ -104,6 +119,13 @@ export class UserStore {
         Accept: "application/json",
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(response => response.json())
       .then(res => {
         this.token = "Token " + res.user.token
@@ -129,6 +151,13 @@ export class UserStore {
         Accept: "application/json",
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(r => {
         if (!r.ok) {
           throw `${r.status}`
@@ -159,7 +188,15 @@ export class UserStore {
         Authorization: window.localStorage.getItem("token"),
         Accept: "application/json",
       },
-    }).then(response => response.json(), error => error.message)
+    })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
+      .then(response => response.json(), error => error.message)
   }
 
   @action
@@ -178,6 +215,13 @@ export class UserStore {
         Authorization: window.localStorage.getItem("token"),
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(r => {
         if (!r.ok) {
           throw `${r.status}`

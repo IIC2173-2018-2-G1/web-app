@@ -56,6 +56,13 @@ export class HashtagStore {
         Authorization: window.localStorage.getItem("token"),
       },
     })
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(res => res.json())
       .then(
         raw_array =>
@@ -65,7 +72,7 @@ export class HashtagStore {
           }))),
       )
       .then(() => (this.awaitingResponse = false))
-      .catch(() => alert("Error getting hashtags"))
+      .catch(() => console.log("Error getting hashtags"))
   }
 
   @action
@@ -82,9 +89,16 @@ export class HashtagStore {
         },
       },
     )
+      .then(r => {
+        if (r.status == 401) {
+          Router.push("/login")
+          return
+        }
+        return r
+      })
       .then(res => res.json())
       .then(raw_array => (this.messages = raw_array))
       .then(() => (this.awaitingResponse = false))
-      .catch(() => alert("Error getting hashtag messages"))
+      .catch(() => console.log("Error getting hashtag messages"))
   }
 }

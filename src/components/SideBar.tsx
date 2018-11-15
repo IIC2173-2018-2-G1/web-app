@@ -87,7 +87,6 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
 
     if (!this.props.userStore.currentUser.username) {
       const res = await this.props.userStore.setCurrentUser()
-      console.log(res)
       if (res.status == 401 || res.status == 404) {
         Router.push("/login")
       }
