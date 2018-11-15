@@ -153,6 +153,7 @@ export class UserStore {
       .then(response => response.json())
       .then(res => {
         let parsed_user = JSON.parse(res.user)
+        window.localStorage.setItem("token", "Token " + parsed_user.token)
         this.user = {
           email: parsed_user.email,
           username: parsed_user.username,
