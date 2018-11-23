@@ -120,17 +120,14 @@ export class ChannelStore {
     this.messages = []
 
     this.awaitingResponse = true
-    fetch(
-      `http://localhost/v1/messages?channel_id=${1234}&start=${start}&count=${count}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: window.localStorage.getItem("token"),
-        },
+    fetch(`http://localhost/v1/messages?channel_id=${1234}&start=${start}&count=${count}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: window.localStorage.getItem("token"),
       },
-    )
+    })
       .then(r => {
         if (r.status == 401) {
           Router.push("/login")

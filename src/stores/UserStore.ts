@@ -25,7 +25,7 @@ export class UserStore {
 
   @action
   public async login(email: string, password: string): Promise<any> {
-    return fetch(`http://localhost/v1/users/login`, {
+    return fetch(`http://localhost/v1/user/login`, {
       method: "POST",
       body: JSON.stringify({
         user: {
@@ -61,7 +61,7 @@ export class UserStore {
 
   @action
   public logout(): void {
-    fetch(`http://localhost/v1/users/logout`, {
+    fetch(`http://localhost/v1/user/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,12 +90,12 @@ export class UserStore {
 
   @action
   public async createUser(user: User, password: string): Promise<any> {
-    return fetch(`http://localhost/v1/users`, {
+    return fetch(`http://localhost/v1/user`, {
       method: "POST",
       body: JSON.stringify({
         user: {
           username: user.username,
-          first_ame: user.firstName,
+          first_name: user.firstName,
           last_name: user.lastName,
           email: user.email,
           password: password,
@@ -129,7 +129,7 @@ export class UserStore {
 
   @action
   public async setCurrentUser(): Promise<any> {
-    return fetch(`http://localhost/v1/users/current`, {
+    return fetch(`http://localhost/v1/user/current`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -167,7 +167,7 @@ export class UserStore {
 
   @action
   public resetPassword(email: string) {
-    fetch(`http://localhost/v1/users/reset-password?email=${email}`, {
+    fetch(`v1/user/reset-password?email=${email}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -187,7 +187,7 @@ export class UserStore {
 
   @action
   public updateUser(user: User): void {
-    fetch(`http://localhost/v1/users`, {
+    fetch(`http://localhost/v1/user`, {
       method: "PUT",
       body: JSON.stringify({
         username: user.username,

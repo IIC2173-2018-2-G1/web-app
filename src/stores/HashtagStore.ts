@@ -79,17 +79,14 @@ export class HashtagStore {
   @action
   public getMessages(hashtag: string, start: number, count: number): void {
     this.awaitingResponse = true
-    fetch(
-      `http://localhost/v1/messages?hashtag=${hashtag}&start=${start}&count=${count}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: window.localStorage.getItem("token"),
-        },
+    fetch(`http://localhost/v1/messages?hashtag=${hashtag}&start=${start}&count=${count}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: window.localStorage.getItem("token"),
       },
-    )
+    })
       .then(r => {
         if (r.status == 401) {
           Router.push("/login")
