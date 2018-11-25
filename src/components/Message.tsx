@@ -57,7 +57,8 @@ const styles = (theme: Theme) =>
 
 export interface MessageProps extends WithStyles<typeof styles> {
   content: string
-  username: string
+  first_name: string
+  last_name: string
   actionBar: boolean
 }
 
@@ -70,9 +71,7 @@ class Message extends React.Component<MessageProps, MessageState> {
     isHovered: false,
   }
   getInitials = () => {
-    return this.props.username
-      .split(/\s+/)
-      .reduce((prev, curr) => prev + curr[0].toUpperCase(), "")
+    return this.props.first_name.charAt(0).toUpperCase() + this.props.last_name.charAt(0).toUpperCase()
   }
 
   mouseEnter = () => {

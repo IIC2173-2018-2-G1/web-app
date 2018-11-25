@@ -4,8 +4,6 @@ import Layout from "../src/components/Layout"
 import Avatar from "@material-ui/core/Avatar"
 import Button from "@material-ui/core/Button"
 import FormControl from "@material-ui/core/FormControl"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
-import Checkbox from "@material-ui/core/Checkbox"
 import Input from "@material-ui/core/Input"
 import InputLabel from "@material-ui/core/InputLabel"
 import LockIcon from "@material-ui/icons/LockOutlined"
@@ -72,7 +70,6 @@ export interface LoginPageProps extends WithStyles<typeof styles> {
 export interface LoginPageState {
   email: string
   password: string
-  remember: boolean
 }
 
 @inject("userStore")
@@ -81,7 +78,6 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
   state = {
     email: "",
     password: "",
-    remember: false,
   }
 
   handleSubmit = async event => {
@@ -93,6 +89,7 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
       )
       if (response.status == 200) {
         Router.push("/")
+        window.location.reload()
       } else {
         alert("error when logging in")
       }
@@ -111,10 +108,6 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
   handleChangeEmail = (email: string) => {
     this.setState({ email })
-  }
-
-  handleChangeRemember = (remember: boolean) => {
-    this.setState({ remember })
   }
 
   render() {
@@ -153,18 +146,6 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                   autoComplete="current-password"
                 />
               </FormControl>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id="remember"
-                    value="remember"
-                    checked={this.state.remember}
-                    onChange={e => this.handleChangeRemember(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label="Remember me"
-              />
               <Button
                 type="submit"
                 fullWidth

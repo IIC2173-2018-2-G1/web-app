@@ -1,4 +1,4 @@
-import { observable, computed, action } from "mobx"
+import { observable, computed, action, when } from "mobx"
 import "isomorphic-fetch"
 import Router from "next/router"
 
@@ -10,8 +10,10 @@ export interface Channel {
 
 export interface Message {
   id: string
-  username: string
+  // username: string
+  user_id: string
   content: string
+  created_on: Date
 }
 
 export class ChannelStore {
@@ -25,7 +27,7 @@ export class ChannelStore {
   private messages: Message[] = []
 
   @observable
-  private awaitingResponse: boolean = false
+  private awaitingResponse: number = 0
 
   @computed
   public get currentChannel(): Channel {
@@ -44,12 +46,12 @@ export class ChannelStore {
 
   @computed
   public get loaded(): boolean {
-    return !this.awaitingResponse
+    return this.awaitingResponse == 0
   }
 
   @action
   public addChannel(newChannel: Channel): void {
-    fetch(`http://localhost/v1/channels`, {
+    fetch(`/api/v1/channels`, {
       method: "POST",
       body: JSON.stringify({
         name: newChannel.name,
@@ -58,7 +60,6 @@ export class ChannelStore {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: window.localStorage.getItem("token"),
       },
     })
       .then(r => {
@@ -79,53 +80,45 @@ export class ChannelStore {
 
   @action
   public setChannelList(): void {
-    this.awaitingResponse = true
+    this.awaitingResponse += 1
     // TODO Handle channels and subscriptions responses
-    fetch(`http://localhost/v1/channels`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: window.localStorage.getItem("token"),
-      },
-    })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
-      .then(channels_r => {
-        if (channels_r.ok) {
-          return channels_r.json()
-        } else {
-          return { channels: this.channelList }
-        }
-      })
-      .then(res => res.channels)
-      .then(obj => {
-        this.channelList = obj.map(ch => ({
-          id: ch._id,
-          name: ch.name,
-          description: ch.description,
-        }))
-      })
-      .then(() => (this.awaitingResponse = false))
+    fetch(`/api/v1/channels`)
+      .then(res => res.json())
+      .then(channels => (this.channelList = channels))
+      .then(() => (this.awaitingResponse -= 1))
       .catch(e => console.log(`Error getting channels: ${e}`))
   }
 
   @action
-  public setChannel(channel_id: string, count: number, start: number): void {
+  public async setChannel(channel_id: string): Promise<void> {
+    await when(() => this.loaded)
     this.channel = this.channelList.filter(ch => ch.id == channel_id)[0]
     this.messages = []
 
-    this.awaitingResponse = true
-    fetch(`http://localhost/v1/messages?channel_id=${1234}&start=${start}&count=${count}`, {
-      method: "GET",
+    this.awaitingResponse += 1
+    fetch(`/api/v1/messages?channel_id=${channel_id}`)
+      .then(res => res.json())
+      .then(messages => (this.messages = messages))
+      .then(() => (this.awaitingResponse -= 1))
+      .catch(e => console.log(`Error getting channel messages: ${e}`))
+  }
+
+  @action
+  public sendMessage(
+    channel_id: string,
+    content: string,
+    response_to: string,
+  ): void {
+    fetch(`/api/v1/messages`, {
+      method: "POST",
+      body: JSON.stringify({
+        channel_id,
+        content,
+        response_to,
+      }),
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: window.localStorage.getItem("token"),
       },
     })
       .then(r => {
@@ -136,48 +129,7 @@ export class ChannelStore {
         return r
       })
       .then(res => res.json())
-      .then(res => {
-        if (res.Error != "") {
-          throw res.Error
-        } else {
-          this.messages = res.messages.map(m => ({
-            id: m.id,
-            content: m.content,
-            username: m.username,
-          }))
-        }
-      })
-      .then(() => (this.awaitingResponse = false))
-      .catch(e => console.log(`Error getting channel messages: ${e}`))
-  }
-
-  @action
-  public sendMessage(
-    channel_id: string,
-    content: string,
-    response_to: string,
-  ): void {
-    fetch(`http://localhost/v1/messages`, {
-      method: "POST",
-      body: JSON.stringify({
-        channel_id,
-        content,
-        response_to,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: window.localStorage.getItem("token"),
-      },
-    })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
-      .then(() => this.setChannel(channel_id, 50, 0))
+      .then(msg => this.messages.unshift(msg))
       .catch(e => console.log(`Error sending message: ${e}`))
   }
 }

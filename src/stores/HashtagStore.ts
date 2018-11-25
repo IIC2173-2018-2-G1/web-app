@@ -49,7 +49,7 @@ export class HashtagStore {
   @action
   public setHashtagList(): void {
     this.awaitingResponse = true
-    fetch(`http://localhost/v1/hashtags`, {
+    fetch(`/api/v1/hashtags`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +79,7 @@ export class HashtagStore {
   @action
   public getMessages(hashtag: string, start: number, count: number): void {
     this.awaitingResponse = true
-    fetch(`http://localhost/v1/messages?hashtag=${hashtag}&start=${start}&count=${count}`, {
+    fetch(`/api/v1/messages?hashtag=${hashtag}&start=${start}&count=${count}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

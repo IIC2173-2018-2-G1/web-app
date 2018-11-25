@@ -21,7 +21,7 @@ import TextField from "@material-ui/core/TextField"
 import Layout from "../../src/components/Layout"
 import Message from "../../src/components/Message"
 import { ChannelStore } from "../../src/stores/ChannelStore"
-import { UserStore } from "../../src/stores/UserStore"
+import { UserStore, User } from "../../src/stores/UserStore"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -80,8 +80,8 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
     this.setState({ subscribed: !this.state.subscribed })
   }
 
-  componentDidMount() {
-    this.props.channelStore.setChannel(this.props.id, 0, 50)
+  componentWillMount() {
+    this.props.channelStore.setChannel(this.props.id)
     when(() => this.props.channelStore.loaded, this.scrollToBottom)
   }
 
@@ -112,7 +112,7 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
         <AppBar position="sticky" className={classes.appBar}>
           <Toolbar>
             <Typography variant="h6" className={classes.grow}>
-              {this.props.channelStore.currentChannel.name}!
+              {this.props.channelStore.loaded ? this.props.channelStore.currentChannel.name : "Loading..."}
             </Typography>
             <Tooltip TransitionComponent={Zoom} title="Show channel info">
               <IconButton aria-label="Info">
@@ -138,14 +138,18 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
         </AppBar>
         <List className={classes.messageList}>
           <div className={classes.listEnd} ref={el => (this.listEnd = el)} />
-          {this.props.channelStore.currentMessages.map(msg => (
-            <Message
-              key={msg.id}
-              content={msg.content}
-              username={msg.username}
-              actionBar={true}
-            />
-          ))}
+          {this.props.channelStore.currentMessages.map(msg => {
+            const { first_name, last_name } = this.props.userStore.allUsers[msg.user_id]
+            return (
+              <Message
+                key={msg.id}
+                content={msg.content}
+                first_name={first_name}
+                last_name={last_name}
+                actionBar={true}
+              />
+            )
+          })}
         </List>
         <TextField
           multiline

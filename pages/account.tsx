@@ -64,10 +64,8 @@ export interface AccountPageProps extends WithStyles<typeof styles> {
 }
 
 export interface AccountPageState {
-  email: string
-  username: string
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
   password: string
   password_confirmation: string
 }
@@ -76,10 +74,8 @@ export interface AccountPageState {
 @observer
 class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
   state = {
-    email: "",
-    username: "",
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     password: "",
     password_confirmation: "",
   }
@@ -87,37 +83,18 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
   componentWillMount() {
     if (this.props.userStore.currentUser != null) {
       this.setState({
-        email: this.props.userStore.currentUser.email,
-        username: this.props.userStore.currentUser.username,
-        firstName: this.props.userStore.currentUser.firstName,
-        lastName: this.props.userStore.currentUser.lastName,
+        first_name: this.props.userStore.currentUser.first_name,
+        last_name: this.props.userStore.currentUser.last_name,
       })
     }
   }
 
   handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
-    this.props.userStore.updateUser({
-      email: this.state.email,
-      username: this.state.username,
-      lastName: this.state.lastName,
-      firstName: this.state.firstName,
-    })
-  }
-
-  validateForm = () => {
-    return (
-      this.state.email.length > 0 &&
-      this.state.username.length > 0 &&
-      this.validatePasswords()
-    )
-  }
-
-  validatePasswords = () => {
-    return (
-      this.state.password.length > 0 &&
-      this.state.password_confirmation.length > 0 &&
-      this.state.password_confirmation === this.state.password
+    this.props.userStore.updateUser(
+      this.state.first_name,
+      this.state.last_name,
+      this.state.password || undefined
     )
   }
 
@@ -129,26 +106,16 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
     this.setState({ password_confirmation })
   }
 
-  handleChangeEmail = (email: string) => {
-    this.setState({ email })
+  handleChangeFirst_name = (first_name: string) => {
+    this.setState({ first_name })
   }
 
-  handleChangeUsername = (username: string) => {
-    this.setState({ username })
+  handleChangeLast_name = (last_name: string) => {
+    this.setState({ last_name })
   }
 
-  handleChangeFirstName = (firstName: string) => {
-    this.setState({ firstName })
-  }
-
-  handleChangeLastName = (lastName: string) => {
-    this.setState({ lastName })
-  }
-
-  getInitials = () => {
-    return this.state.username
-      .split(/\s+/)
-      .reduce((prev, curr) => prev + curr[0].toUpperCase(), "")
+  handleLogout = () => {
+    this.props.userStore.logout();
   }
 
   render() {
@@ -161,48 +128,27 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
               Account information
             </Typography>
             <form className={classes.form} onSubmit={this.handleSubmit}>
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="email">Email Address</InputLabel>
+              <FormControl margin="normal" fullWidth>
+                <InputLabel htmlFor="first_name">First Name</InputLabel>
                 <Input
-                  id="email"
-                  value={this.state.email}
-                  onChange={e => this.handleChangeEmail(e.target.value)}
-                  name="email"
-                  autoComplete="email"
-                  autoFocus
+                  id="first_name"
+                  value={this.state.first_name}
+                  onChange={e => this.handleChangeFirst_name(e.target.value)}
+                  name="first_name"
+                  autoComplete="first_name"
                 />
               </FormControl>
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="username">Username</InputLabel>
+              <FormControl margin="normal" fullWidth>
+                <InputLabel htmlFor="last_name">Last Name</InputLabel>
                 <Input
-                  id="username"
-                  value={this.state.username}
-                  onChange={e => this.handleChangeUsername(e.target.value)}
-                  name="username"
-                  autoComplete="username"
+                  id="last_name"
+                  value={this.state.last_name}
+                  onChange={e => this.handleChangeLast_name(e.target.value)}
+                  name="last_name"
+                  autoComplete="last_name"
                 />
               </FormControl>
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="firstName">First Name</InputLabel>
-                <Input
-                  id="firstName"
-                  value={this.state.firstName}
-                  onChange={e => this.handleChangeFirstName(e.target.value)}
-                  name="firstName"
-                  autoComplete="firstName"
-                />
-              </FormControl>
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="lastName">Last Name</InputLabel>
-                <Input
-                  id="lastName"
-                  value={this.state.lastName}
-                  onChange={e => this.handleChangeLastName(e.target.value)}
-                  name="lastName"
-                  autoComplete="lastName"
-                />
-              </FormControl>
-              <FormControl margin="normal" required fullWidth>
+              <FormControl margin="normal" fullWidth>
                 <InputLabel htmlFor="password">Password</InputLabel>
                 <Input
                   name="password"
@@ -213,11 +159,12 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
                   autoComplete="current-password"
                 />
               </FormControl>
-              <FormControl margin="normal" required fullWidth>
+              <FormControl margin="normal" fullWidth>
                 <InputLabel htmlFor="password_confirmation">
                   Password confirmation
                 </InputLabel>
                 <Input
+                  disabled={this.state.password.length == 0}
                   name="password_confirmation"
                   type="password"
                   id="password_confirmation"
@@ -236,6 +183,15 @@ class AccountPage extends React.Component<AccountPageProps, AccountPageState> {
                 className={classes.submit}
               >
                 Save Changes
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                color="secondary"
+                className={classes.submit}
+                onClick={this.handleLogout}
+              >
+                Logout
               </Button>
             </form>
           </Paper>

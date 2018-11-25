@@ -80,21 +80,6 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
     notificationTooltipOpen: false,
   }
 
-  async componentDidMount() {
-    if (window.localStorage && !localStorage.getItem("token")) {
-      Router.push("/login")
-    }
-
-    if (!this.props.userStore.currentUser.username) {
-      const res = await this.props.userStore.setCurrentUser()
-      if (res.status == 401 || res.status == 404) {
-        Router.push("/login")
-      }
-    }
-
-    this.props.channelStore.setChannelList()
-  }
-
   handleUsernameClick = () => {
     if (!this.state.notificationTooltipOpen) {
       Router.push("/account")
@@ -119,9 +104,9 @@ class SideBar extends React.Component<SideBarProps, SideBarState> {
             <ListItemText
               primary={this.props.userStore.currentUser.username}
               secondary={
-                this.props.userStore.currentUser.firstName +
+                this.props.userStore.currentUser.first_name +
                 " " +
-                this.props.userStore.currentUser.lastName
+                this.props.userStore.currentUser.last_name
               }
             />
             <Tooltip

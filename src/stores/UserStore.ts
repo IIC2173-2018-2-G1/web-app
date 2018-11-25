@@ -1,38 +1,44 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
 import Router from "next/router"
+import deleteCookie from "../utils/deleteCookie"
 
 export interface User {
   username: string
-  firstName: string
-  lastName: string
-  email: string
+  first_name: string
+  last_name: string
+  email?: string
+  id?: string
 }
 
 export class UserStore {
   @observable
-  private user: User = {
+  private current_user: User = {
     username: null,
-    firstName: null,
-    lastName: null,
+    first_name: null,
+    last_name: null,
     email: null,
+    id: null,
+  }
+
+  @observable
+  private all_users: { [id: string]: User } = {}
+
+  @computed
+  public get allUsers(): { [id: string]: User } {
+    return this.all_users
   }
 
   @computed
   public get currentUser(): User {
-    return this.user
+    return this.current_user
   }
 
   @action
   public async login(email: string, password: string): Promise<any> {
-    return fetch(`http://localhost/v1/user/login`, {
+    return fetch(`/api/v1/users/login`, {
       method: "POST",
-      body: JSON.stringify({
-        user: {
-          email,
-          password,
-        },
-      }),
+      body: JSON.stringify({ email, password }),
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -46,60 +52,33 @@ export class UserStore {
         return r
       })
       .then(response => response.json())
-      .then(res => {
-        window.localStorage.setItem("token", "Token " + res.user.token)
-        this.user = {
-          email: res.user.email,
-          username: res.user.username,
-          firstName: res.user.first_name,
-          lastName: res.user.last_name,
-        }
-        return { status: 200 }
-      })
+      .then(user => (this.current_user = user))
+      .then(() => ({ status: 200 }))
       .catch((e: Error) => ({ status: `error: ${e}` }))
   }
 
   @action
   public logout(): void {
-    fetch(`http://localhost/v1/user/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: window.localStorage.getItem("token"),
-      },
-    })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
-      .then(response => response.json(), error => error.message)
-      .then(() => {
-        this.user = {
-          username: null,
-          firstName: null,
-          lastName: null,
-          email: null,
-        }
-        window.localStorage.clear()
-      })
+    window.localStorage.clear()
+    deleteCookie("_session")
+    this.current_user = {
+      username: null,
+      first_name: null,
+      last_name: null,
+      email: null,
+      id: null,
+    }
+    this.all_users = {}
+    Router.push("/login")
   }
 
   @action
   public async createUser(user: User, password: string): Promise<any> {
-    return fetch(`http://localhost/v1/user`, {
+    return fetch(`/api/v1/users`, {
       method: "POST",
       body: JSON.stringify({
-        user: {
-          username: user.username,
-          first_name: user.firstName,
-          last_name: user.lastName,
-          email: user.email,
-          password: password,
-        },
+        ...user,
+        password,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -114,67 +93,38 @@ export class UserStore {
         return r
       })
       .then(response => response.json())
-      .then(res => {
-        window.localStorage.setItem("token", "Token " + res.user.token)
-        this.user = {
-          email: res.user.email,
-          username: res.user.username,
-          firstName: res.user.first_name,
-          lastName: res.user.last_name,
-        }
-        return { status: 200 }
-      })
+      .then(user => (this.current_user = user))
+      .then(() => ({ status: 200 }))
       .catch((e: Error) => ({ status: `error: ${e}` }))
   }
 
   @action
-  public async setCurrentUser(): Promise<any> {
-    return fetch(`http://localhost/v1/user/current`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: window.localStorage.getItem("token"),
-        Accept: "application/json",
-      },
-    })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
-      .then(r => {
-        if (!r.ok) {
-          throw `${r.status}`
-        }
-        return r
-      })
+  public async setCurrentUser(): Promise<void> {
+    fetch(`/api/v1/users/current`)
       .then(response => response.json())
-      .then(res => {
-        let parsed_user = JSON.parse(res.user)
-        window.localStorage.setItem("token", "Token " + parsed_user.token)
-        this.user = {
-          email: parsed_user.email,
-          username: parsed_user.username,
-          firstName: parsed_user.first_name,
-          lastName: parsed_user.last_name,
-        }
-        return { status: 200 }
-      })
+      .then(user => (this.current_user = user))
+      .then(() => ({ status: 200 }))
+      .catch((e: Error) => ({ status: `${e}`, message: "error :(" }))
+  }
+
+  @action
+  public async setAllUsers(): Promise<void> {
+    fetch(`/api/v1/users`)
+      .then(response => response.json())
+      .then(
+        users =>
+          (this.all_users = users.reduce((map, new_user) => {
+            map[new_user.id] = new_user
+            return map
+          }, {})),
+      )
+      .then(() => ({ status: 200 }))
       .catch((e: Error) => ({ status: `${e}`, message: "error :(" }))
   }
 
   @action
   public resetPassword(email: string) {
-    fetch(`v1/user/reset-password?email=${email}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: window.localStorage.getItem("token"),
-        Accept: "application/json",
-      },
-    })
+    fetch(`/api/v1/users/reset-password?email=${email}`)
       .then(r => {
         if (r.status == 401) {
           Router.push("/login")
@@ -186,44 +136,28 @@ export class UserStore {
   }
 
   @action
-  public updateUser(user: User): void {
-    fetch(`http://localhost/v1/user`, {
+  public updateUser(
+    first_name: string,
+    last_name: string,
+    password: string,
+  ): void {
+    fetch(`/api/v1/users/current`, {
       method: "PUT",
       body: JSON.stringify({
-        username: user.username,
-        first_name: user.firstName,
-        last_name: user.lastName,
-        email: user.email,
+        first_name,
+        last_name,
+        password,
       }),
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: window.localStorage.getItem("token"),
       },
     })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
-      .then(r => {
-        if (!r.ok) {
-          throw `${r.status}`
-        }
-        return r
-      })
       .then(response => response.json())
-      .then(
-        user =>
-          (this.user = {
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-          }),
-      )
+      .then(user => {
+        this.current_user = user
+        this.all_users[user.id] = user
+      })
       .catch((e: Error) => ({ status: `${e}`, message: "error :(" }))
   }
 }

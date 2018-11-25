@@ -9,7 +9,7 @@ import { ChannelStore } from "../src/stores/ChannelStore"
 import { UserStore } from "../src/stores/UserStore"
 import { HashtagStore } from "../src/stores/HashtagStore"
 
-class MyApp extends App {
+export default class MyApp extends App {
   private pageContext: PageContext
   private channelStore: ChannelStore = new ChannelStore()
   private userStore: UserStore = new UserStore()
@@ -18,6 +18,9 @@ class MyApp extends App {
   constructor(props) {
     super(props)
     this.pageContext = getPageContext()
+    this.userStore.setCurrentUser()
+    this.userStore.setAllUsers()
+    this.channelStore.setChannelList()
   }
 
   componentDidMount() {
@@ -61,4 +64,3 @@ class MyApp extends App {
   }
 }
 
-export default MyApp

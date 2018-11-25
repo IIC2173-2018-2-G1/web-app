@@ -68,8 +68,8 @@ export interface SignInPageProps extends WithStyles<typeof styles> {
 export interface SignInPageState {
   email: string
   username: string
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
   password: string
   password_confirmation: string
 }
@@ -80,8 +80,8 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
   state = {
     email: "",
     username: "",
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     password: "",
     password_confirmation: "",
   }
@@ -93,13 +93,14 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         {
           email: this.state.email,
           username: this.state.username,
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
+          first_name: this.state.first_name,
+          last_name: this.state.last_name,
         },
         this.state.password,
       )
       if (response.status == 200) {
         Router.push("/")
+        window.location.reload()
       } else {
         alert("error when logging in")
       }
@@ -141,12 +142,12 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     this.setState({ username })
   }
 
-  handleChangeFirstName = (firstName: string) => {
-    this.setState({ firstName })
+  handleChangeFirstName = (first_name: string) => {
+    this.setState({ first_name })
   }
 
-  handleChangeLastName = (lastName: string) => {
-    this.setState({ lastName })
+  handleChangeLastName = (last_name: string) => {
+    this.setState({ last_name })
   }
 
   render() {
@@ -185,7 +186,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                 <InputLabel htmlFor="firstName">First Name</InputLabel>
                 <Input
                   id="firstName"
-                  value={this.state.firstName}
+                  value={this.state.first_name}
                   onChange={e => this.handleChangeFirstName(e.target.value)}
                   name="firstName"
                   autoComplete="firstName"
@@ -195,7 +196,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                 <InputLabel htmlFor="lastName">Last Name</InputLabel>
                 <Input
                   id="lastName"
-                  value={this.state.lastName}
+                  value={this.state.last_name}
                   onChange={e => this.handleChangeLastName(e.target.value)}
                   name="lastName"
                   autoComplete="lastName"
