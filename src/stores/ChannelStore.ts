@@ -104,25 +104,19 @@ export class ChannelStore {
   }
 
   @action
-  public sendMessage(
-    channel_id: string,
-    content: string,
-    response_to: string,
-  ): void {
+  public sendMessage(channel_id: string, content: string): void {
     fetch(`/api/v1/messages`, {
       method: "POST",
       body: JSON.stringify({
         channel_id,
         content,
-        response_to,
       }),
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
       },
     })
       .then(res => res.json())
-      .then(msg => (this.messages = msg))
+      .then(() => this.setChannel(this.channel.id))
       .catch(e => console.log(`Error sending message: ${e}`))
   }
 }

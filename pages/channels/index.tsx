@@ -98,7 +98,6 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
       this.props.channelStore.sendMessage(
         this.props.id,
         this.state.newMessageInput,
-        null,
       )
       e.preventDefault()
       this.setState({ newMessageInput: "" })
