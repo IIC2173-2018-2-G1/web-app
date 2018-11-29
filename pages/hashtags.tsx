@@ -49,8 +49,8 @@ class HashtagsPage extends React.Component<
     this.props.hashtagStore.setHashtagList()
   }
 
-  handleChangeHashtag = (hashtag: string) => {
-    this.setState({ hashtag })
+  handleChangeHashtag = (hashtag: { label: string; value: string }) => {
+    this.setState({ hashtag: hashtag.value })
   }
 
   handleSearch = (e: React.FormEvent) => {

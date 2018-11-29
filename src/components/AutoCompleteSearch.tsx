@@ -168,7 +168,7 @@ const components = {
 export interface AutoCompleteSearchProps extends WithStyles<typeof styles> {
   hashtag: string
   options: string[]
-  handleChange: (value: string) => void
+  handleChange: (value: { label: string; value: string }) => void
   handleSearch: (event: React.FormEvent) => void
   placeholder: string
   label: string
@@ -212,9 +212,9 @@ class AutoCompleteSearch extends React.Component<
                 },
               }}
               classes={classes}
-              options={this.props.options}
+              options={this.props.options.map(e => ({ label: e, value: e }))}
               components={components}
-              value={this.props.hashtag}
+              value={{ label: this.props.hashtag, value: this.props.hashtag }}
               onChange={this.props.handleChange}
               placeholder={this.props.placeholder}
             />
