@@ -55,9 +55,9 @@ class HashtagsPage extends React.Component<
 
   handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO handle start and count when scrolling
+
     if (this.state.hashtag) {
-      this.props.hashtagStore.getMessages(this.state.hashtag.value, 0, 50)
+      this.props.hashtagStore.getMessages(this.state.hashtag.value)
     }
   }
 
@@ -78,14 +78,19 @@ class HashtagsPage extends React.Component<
         />
         <List className={classes.messageList}>
           {this.props.hashtagStore.currentMessages.length > 0 ? (
-            this.props.hashtagStore.currentMessages.map((msg, ix) => (
-              <Message
-                key={msg.id}
-                content={`${ix}. ${msg.content}`}
-                username={msg.username}
-                actionBar={false}
-              />
-            ))
+            this.props.hashtagStore.currentMessages.map(msg => {
+              const user = this.props.userStore.allUsers[msg.user_id]
+              return (
+                <Message
+                  key={msg.id}
+                  content={msg.content}
+                  first_name={user.first_name}
+                  last_name={user.last_name}
+                  username={user.username}
+                  actionBar={true}
+                />
+              )
+            })
           ) : (
             <div>
               <Typography variant="body2">

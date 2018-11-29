@@ -44,13 +44,6 @@ export class UserStore {
         Accept: "application/json",
       },
     })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
       .then(response => response.json())
       .then(user => (this.current_user = user))
       .then(() => ({ status: 200 }))
@@ -85,13 +78,6 @@ export class UserStore {
         Accept: "application/json",
       },
     })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
       .then(response => response.json())
       .then(user => (this.current_user = user))
       .then(() => ({ status: 200 }))
@@ -124,15 +110,10 @@ export class UserStore {
 
   @action
   public resetPassword(email: string) {
-    fetch(`/api/v1/users/reset-password?email=${email}`)
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
-      .then(response => response.json(), error => error.message)
+    fetch(`/api/v1/users/reset-password?email=${email}`).then(
+      response => response.json(),
+      error => error.message,
+    )
   }
 
   @action

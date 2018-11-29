@@ -8,12 +8,19 @@ export interface Channel {
   description: string
 }
 
+export interface Reaction {
+  id: string
+  name: string
+}
+
 export interface Message {
   id: string
-  // username: string
   user_id: string
+  channel_id: string
   content: string
+  response_to?: string
   created_on: Date
+  reactions: Reaction[]
 }
 
 export class ChannelStore {
@@ -62,13 +69,6 @@ export class ChannelStore {
         Accept: "application/json",
       },
     })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
       .then(res => res.json())
       .then(raw => {
         this.setChannelList()
@@ -121,15 +121,8 @@ export class ChannelStore {
         Accept: "application/json",
       },
     })
-      .then(r => {
-        if (r.status == 401) {
-          Router.push("/login")
-          return
-        }
-        return r
-      })
       .then(res => res.json())
-      .then(msg => this.messages.unshift(msg))
+      .then(msg => (this.messages = msg))
       .catch(e => console.log(`Error sending message: ${e}`))
   }
 }

@@ -112,7 +112,9 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
         <AppBar position="sticky" className={classes.appBar}>
           <Toolbar>
             <Typography variant="h6" className={classes.grow}>
-              {this.props.channelStore.loaded ? this.props.channelStore.currentChannel.name : "Loading..."}
+              {this.props.channelStore.loaded
+                ? this.props.channelStore.currentChannel.name
+                : "Loading..."}
             </Typography>
             <Tooltip TransitionComponent={Zoom} title="Show channel info">
               <IconButton aria-label="Info">
@@ -139,13 +141,14 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
         <List className={classes.messageList}>
           <div className={classes.listEnd} ref={el => (this.listEnd = el)} />
           {this.props.channelStore.currentMessages.map(msg => {
-            const { first_name, last_name } = this.props.userStore.allUsers[msg.user_id]
+            const user = this.props.userStore.allUsers[msg.user_id]
             return (
               <Message
                 key={msg.id}
                 content={msg.content}
-                first_name={first_name}
-                last_name={last_name}
+                first_name={user.first_name}
+                last_name={user.last_name}
+                username={user.username}
                 actionBar={true}
               />
             )
