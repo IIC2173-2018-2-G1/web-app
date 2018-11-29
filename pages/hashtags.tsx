@@ -31,7 +31,7 @@ export interface HashtagsPageProps extends WithStyles<typeof styles> {
 }
 
 export interface HashtagsPageState {
-  hashtag: { label: string; value: string }
+  hashtag: string
 }
 
 @inject("hashtagStore")
@@ -42,14 +42,14 @@ class HashtagsPage extends React.Component<
   HashtagsPageState
 > {
   state = {
-    hashtag: null,
+    hashtag: "",
   }
 
   componentDidMount() {
     this.props.hashtagStore.setHashtagList()
   }
 
-  handleChangeHashtag = (hashtag: { label: string; value: string }) => {
+  handleChangeHashtag = (hashtag: string) => {
     this.setState({ hashtag })
   }
 
@@ -57,7 +57,7 @@ class HashtagsPage extends React.Component<
     e.preventDefault()
 
     if (this.state.hashtag) {
-      this.props.hashtagStore.getMessages(this.state.hashtag.value)
+      this.props.hashtagStore.getMessages(this.state.hashtag)
     }
   }
 
@@ -67,9 +67,7 @@ class HashtagsPage extends React.Component<
     return (
       <Layout>
         <AutoCompleteSearch
-          options={this.props.hashtagStore.currentHashtagList.map(
-            hs => hs.name,
-          )}
+          options={this.props.hashtagStore.currentHashtagList}
           handleSearch={this.handleSearch}
           handleChange={this.handleChangeHashtag}
           hashtag={this.state.hashtag}

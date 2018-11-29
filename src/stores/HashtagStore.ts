@@ -1,11 +1,6 @@
 import { observable, computed, action } from "mobx"
 import "isomorphic-fetch"
 
-export interface Hashtag {
-  id: string
-  name: string
-}
-
 export interface Reaction {
   id: string
   name: string
@@ -23,21 +18,21 @@ export interface Message {
 
 export class HashtagStore {
   @observable
-  hashtag: Hashtag = { id: null, name: "" }
+  hashtag: string = ""
 
   @observable
-  hashtagList: Hashtag[] = []
+  hashtagList: string[] = []
 
   @observable
   private messages: Message[] = []
 
   @computed
-  public get currentHashtag(): Hashtag {
+  public get currentHashtag(): string {
     return this.hashtag
   }
 
   @computed
-  public get currentHashtagList(): Hashtag[] {
+  public get currentHashtagList(): string[] {
     return this.hashtagList
   }
 
