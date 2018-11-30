@@ -21,7 +21,8 @@ import TextField from "@material-ui/core/TextField"
 import Layout from "../../src/components/Layout"
 import Message from "../../src/components/Message"
 import { ChannelStore } from "../../src/stores/ChannelStore"
-import { UserStore, User } from "../../src/stores/UserStore"
+import { UserStore } from "../../src/stores/UserStore"
+import { Paper } from "@material-ui/core"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -49,6 +50,27 @@ const styles = (theme: Theme) =>
       bottom: 0,
       background: theme.palette.background.default,
     },
+    paper: {
+      marginTop: theme.spacing.unit * 8,
+      marginBottom: theme.spacing.unit * 8,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+        .spacing.unit * 3}px`,
+    },
+    closeImg: {
+      cursor: "pointer",
+      float: "right",
+      marginTop: "5px",
+      width: "20px",
+    },
+    username: {
+      paddingTop: 0,
+      marginRight: theme.spacing.unit,
+      fontWeight: "bold",
+      marginBottom: theme.spacing.unit,
+    },
   })
 
 export interface ChannelPageProps extends WithStyles<typeof styles> {
@@ -60,6 +82,7 @@ export interface ChannelPageProps extends WithStyles<typeof styles> {
 export interface ChannelPageState {
   subscribed: boolean
   newMessageInput: string
+  responseTo: { id: string; content: string; username: string }
 }
 
 @inject("channelStore")
@@ -67,9 +90,15 @@ export interface ChannelPageState {
 @observer
 class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   private listEnd: Element
+  textInput = null
   state = {
     newMessageInput: "",
     subscribed: false,
+    responseTo: null,
+  }
+
+  componentDidMount() {
+    this.textInput.focus()
   }
 
   static async getInitialProps({ query }) {
@@ -93,14 +122,33 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
     this.setState({ newMessageInput: e.target.value })
   }
 
+  handleResponseClick = responseTo => {
+    this.setState({ responseTo }, () => this.textInput.focus())
+  }
+
+  cancelResponse = () => {
+    this.setState({ responseTo: null })
+  }
+
   handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.keyCode == 13 && !e.shiftKey) {
-      this.props.channelStore.sendMessage(
-        this.props.id,
-        this.state.newMessageInput,
-      )
+      if (this.state.responseTo == null) {
+        this.props.channelStore.sendMessage(
+          this.props.id,
+          this.state.newMessageInput,
+        )
+      } else {
+        this.props.channelStore.answerMessage(
+          this.props.id,
+          this.state.newMessageInput,
+          this.state.responseTo.id,
+        )
+      }
       e.preventDefault()
       this.setState({ newMessageInput: "" })
+      when(() => this.props.channelStore.loaded, this.scrollToBottom)
+    } else if (e.keyCode == 27) {
+      this.setState({ responseTo: null })
     }
   }
 
@@ -141,19 +189,44 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
           <div className={classes.listEnd} ref={el => (this.listEnd = el)} />
           {this.props.channelStore.currentMessages.map(msg => {
             const user = this.props.userStore.allUsers[msg.user_id]
+            const resp_msg = msg.response_to
+              ? this.props.channelStore.getMessage(msg.response_to)
+              : null
+            const resp_obj = resp_msg
+              ? {
+                  content: resp_msg.content,
+                  user: this.props.userStore.allUsers[resp_msg.user_id]
+                    .username,
+                }
+              : null
             return (
               <Message
                 key={msg.id}
                 content={msg.content}
+                id={msg.id}
+                response={resp_obj}
                 first_name={user.first_name}
                 last_name={user.last_name}
                 username={user.username}
+                handleResponseClick={this.handleResponseClick}
                 actionBar={true}
+                date={msg.created_on}
               />
             )
           })}
         </List>
+        {this.state.responseTo ? (
+          <Paper className={classes.paper} elevation={1}>
+            <Typography variant="caption" className={classes.username}>
+              {this.state.responseTo.username}
+            </Typography>
+            <Typography variant="body2">
+              {this.state.responseTo.content}
+            </Typography>
+          </Paper>
+        ) : null}
         <TextField
+          innerRef={input => (this.textInput = input)}
           multiline
           fullWidth
           className={classes.textInput}

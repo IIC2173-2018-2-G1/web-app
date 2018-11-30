@@ -11,6 +11,7 @@ import Avatar from "@material-ui/core/Avatar"
 import Tooltip from "@material-ui/core/Tooltip"
 import ReplyIcon from "@material-ui/icons/Reply"
 import ReactionIcon from "@material-ui/icons/InsertEmoticon"
+import { Paper } from "@material-ui/core"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,14 +54,27 @@ const styles = (theme: Theme) =>
       fontWeight: "bold",
       marginBottom: theme.spacing.unit,
     },
+    paper: {
+      marginTop: theme.spacing.unit * 8,
+      marginBottom: theme.spacing.unit * 8,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+        .spacing.unit * 3}px`,
+    },
   })
 
 export interface MessageProps extends WithStyles<typeof styles> {
   content: string
+  id: string
   username: string
   first_name: string
   last_name: string
   actionBar: boolean
+  response: { content: string; user: string }
+  handleResponseClick: (string) => void
+  date: Date
 }
 
 export interface MessageState {
@@ -86,18 +100,35 @@ class Message extends React.Component<MessageProps, MessageState> {
     this.setState({ isHovered: false })
   }
 
+  responseClick = () => {
+    this.props.handleResponseClick({
+      id: this.props.id,
+      content: this.props.content,
+    })
+  }
+
   renderActionBar = () => {
     if (!this.state.isHovered) return
     const { classes } = this.props
     return (
       <div className={classes.actionBar}>
-        <Tooltip title="Reply to this message">
+        <Tooltip title="Reply to this message" onClick={this.responseClick}>
           <ReplyIcon color="action" className={classes.actionButton} />
         </Tooltip>
         <Tooltip title="Add a reaction">
           <ReactionIcon color="action" className={classes.actionButton} />
         </Tooltip>
       </div>
+    )
+  }
+
+  renderResponse = () => {
+    const { classes } = this.props
+    return (
+      <Paper className={classes.paper} elevation={1}>
+        <Typography component="h5">{this.props.response.user}</Typography>
+        <Typography component="p">{this.props.response.content}</Typography>
+      </Paper>
     )
   }
 
@@ -112,6 +143,7 @@ class Message extends React.Component<MessageProps, MessageState> {
         onMouseLeave={this.mouseLeave}
       >
         {this.props.actionBar ? this.renderActionBar() : null}
+        {this.props.response ? this.renderResponse() : null}
         <div className={classes.columns}>
           <Avatar className={classes.avatar}>{this.getInitials()}</Avatar>
           <div className={classes.rows}>
@@ -119,7 +151,7 @@ class Message extends React.Component<MessageProps, MessageState> {
               <Typography variant="caption" className={classes.username}>
                 {this.props.username}
               </Typography>
-              <Typography variant="caption">5:15 PM</Typography>
+              <Typography variant="caption">{this.props.date}</Typography>
             </div>
             <Typography variant="body2">{this.props.content}</Typography>
           </div>

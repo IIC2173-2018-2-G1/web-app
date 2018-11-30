@@ -42,6 +42,16 @@ export class ChannelStore {
   }
 
   @computed
+  public getMessage(id: string): Message {
+    let filtered = this.messages.filter(m => m.id === id)
+    if (filtered.length > 0) {
+      return filtered[0]
+    } else {
+      return null
+    }
+  }
+
+  @computed
   public get currentChannelList(): Channel[] {
     return this.channelList
   }
@@ -104,7 +114,32 @@ export class ChannelStore {
   }
 
   @action
+  public answerMessage(
+    channel_id: string,
+    content: string,
+    response_to: string,
+  ) {
+    this.awaitingResponse += 1
+    fetch(`/api/v1/messages`, {
+      method: "POST",
+      body: JSON.stringify({
+        channel_id,
+        content,
+        response_to,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(res => res.json())
+      .then(() => this.setChannel(this.channel.id))
+      .then(() => (this.awaitingResponse -= 1))
+      .catch(e => console.log(`Error sending message: ${e}`))
+  }
+
+  @action
   public sendMessage(channel_id: string, content: string): void {
+    this.awaitingResponse += 1
     fetch(`/api/v1/messages`, {
       method: "POST",
       body: JSON.stringify({
@@ -117,6 +152,7 @@ export class ChannelStore {
     })
       .then(res => res.json())
       .then(() => this.setChannel(this.channel.id))
+      .then(() => (this.awaitingResponse -= 1))
       .catch(e => console.log(`Error sending message: ${e}`))
   }
 }

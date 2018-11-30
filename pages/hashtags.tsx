@@ -85,7 +85,7 @@ class HashtagsPage extends React.Component<
                   first_name={user.first_name}
                   last_name={user.last_name}
                   username={user.username}
-                  actionBar={true}
+                  actionBar={false}
                 />
               )
             })
