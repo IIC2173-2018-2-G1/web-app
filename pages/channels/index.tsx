@@ -51,13 +51,12 @@ const styles = (theme: Theme) =>
       background: theme.palette.background.default,
     },
     paper: {
-      marginTop: theme.spacing.unit * 8,
-      marginBottom: theme.spacing.unit * 8,
+      margin: theme.spacing.unit,
       display: "flex",
+      position: "sticky",
       flexDirection: "column",
       alignItems: "center",
-      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-        .spacing.unit * 3}px`,
+      padding: theme.spacing.unit * 3,
     },
     closeImg: {
       cursor: "pointer",
@@ -98,7 +97,7 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
   }
 
   componentDidMount() {
-    this.textInput.focus()
+    this.focusMessageInput()
   }
 
   static async getInitialProps({ query }) {
@@ -122,8 +121,16 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
     this.setState({ newMessageInput: e.target.value })
   }
 
+  focusMessageInput = () => {
+    if (this.textInput) {
+      setTimeout(() => {
+        this.textInput.focus()
+      }, 100)
+    }
+  }
+
   handleResponseClick = responseTo => {
-    this.setState({ responseTo }, () => this.textInput.focus())
+    this.setState({ responseTo }, () => this.focusMessageInput())
   }
 
   cancelResponse = () => {
@@ -145,7 +152,7 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
         )
       }
       e.preventDefault()
-      this.setState({ newMessageInput: "" })
+      this.setState({ newMessageInput: "", responseTo: null })
       when(() => this.props.channelStore.loaded, this.scrollToBottom)
     } else if (e.keyCode == 27) {
       this.setState({ responseTo: null })
@@ -226,7 +233,7 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
           </Paper>
         ) : null}
         <TextField
-          innerRef={input => (this.textInput = input)}
+          inputRef={i => (this.textInput = i)}
           multiline
           fullWidth
           className={classes.textInput}
