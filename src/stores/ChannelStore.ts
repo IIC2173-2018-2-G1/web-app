@@ -42,16 +42,6 @@ export class ChannelStore {
   }
 
   @computed
-  public getMessage(id: string): Message {
-    let filtered = this.messages.filter(m => m.id === id)
-    if (filtered.length > 0) {
-      return filtered[0]
-    } else {
-      return null
-    }
-  }
-
-  @computed
   public get currentChannelList(): Channel[] {
     return this.channelList
   }

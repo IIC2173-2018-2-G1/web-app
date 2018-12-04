@@ -57,9 +57,8 @@ const styles = (theme: Theme) =>
     paper: {
       marginTop: theme.spacing.unit * 8,
       marginBottom: theme.spacing.unit * 8,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
+      display: "block",
+      alignItems: "left",
       padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
         .spacing.unit * 3}px`,
     },

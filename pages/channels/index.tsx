@@ -52,10 +52,9 @@ const styles = (theme: Theme) =>
     },
     paper: {
       margin: theme.spacing.unit,
-      display: "flex",
+      display: "block",
       position: "sticky",
-      flexDirection: "column",
-      alignItems: "center",
+      alignItems: "left",
       padding: theme.spacing.unit * 3,
     },
     closeImg: {
@@ -129,6 +128,17 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
     }
   }
 
+  getMessage = (id: string) => {
+    let filtered = this.props.channelStore.currentMessages.filter(
+      m => m.id === id,
+    )
+    if (filtered.length > 0) {
+      return filtered[0]
+    } else {
+      return null
+    }
+  }
+
   handleResponseClick = responseTo => {
     this.setState({ responseTo }, () => this.focusMessageInput())
   }
@@ -196,16 +206,16 @@ class ChannelPage extends React.Component<ChannelPageProps, ChannelPageState> {
           <div className={classes.listEnd} ref={el => (this.listEnd = el)} />
           {this.props.channelStore.currentMessages.map(msg => {
             const user = this.props.userStore.allUsers[msg.user_id]
-            const resp_msg = msg.response_to
-              ? this.props.channelStore.getMessage(msg.response_to)
-              : null
-            const resp_obj = resp_msg
-              ? {
-                  content: resp_msg.content,
-                  user: this.props.userStore.allUsers[resp_msg.user_id]
-                    .username,
-                }
-              : null
+            const resp_msg =
+              msg.response_to != null ? this.getMessage(msg.response_to) : null
+            const resp_obj =
+              resp_msg != null
+                ? {
+                    content: resp_msg.content,
+                    user: this.props.userStore.allUsers[resp_msg.user_id]
+                      .username,
+                  }
+                : null
             return (
               <Message
                 key={msg.id}
