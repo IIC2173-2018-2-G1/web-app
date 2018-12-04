@@ -122,8 +122,8 @@ export class ChannelStore {
       },
     })
       .then(res => res.json())
-      .then(() => this.setChannel(this.channel.id))
       .then(() => (this.awaitingResponse -= 1))
+      .then(() => this.setChannel(this.channel.id))
       .catch(e => console.log(`Error sending message: ${e}`))
   }
 
@@ -141,8 +141,8 @@ export class ChannelStore {
       },
     })
       .then(res => res.json())
-      .then(() => this.setChannel(this.channel.id))
       .then(() => (this.awaitingResponse -= 1))
+      .then(() => this.setChannel(this.channel.id))
       .catch(e => console.log(`Error sending message: ${e}`))
   }
 }
