@@ -55,8 +55,8 @@ const styles = (theme: Theme) =>
       marginBottom: theme.spacing.unit,
     },
     paper: {
-      marginTop: theme.spacing.unit * 8,
-      marginBottom: theme.spacing.unit * 8,
+      marginTop: theme.spacing.unit,
+      marginBottom: theme.spacing.unit,
       display: "block",
       alignItems: "left",
       padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
@@ -102,6 +102,7 @@ class Message extends React.Component<MessageProps, MessageState> {
   responseClick = () => {
     this.props.handleResponseClick({
       id: this.props.id,
+      username: this.props.username,
       content: this.props.content,
     })
   }
@@ -142,17 +143,19 @@ class Message extends React.Component<MessageProps, MessageState> {
         onMouseLeave={this.mouseLeave}
       >
         {this.props.actionBar ? this.renderActionBar() : null}
-        {this.props.response ? this.renderResponse() : null}
-        <div className={classes.columns}>
-          <Avatar className={classes.avatar}>{this.getInitials()}</Avatar>
-          <div className={classes.rows}>
-            <div className={classes.columns}>
-              <Typography variant="caption" className={classes.username}>
-                {this.props.username}
-              </Typography>
-              <Typography variant="caption">{this.props.date}</Typography>
+        <div className={classes.rows}>
+          {this.props.response ? this.renderResponse() : null}
+          <div className={classes.columns}>
+            <Avatar className={classes.avatar}>{this.getInitials()}</Avatar>
+            <div className={classes.rows}>
+              <div className={classes.columns}>
+                <Typography variant="caption" className={classes.username}>
+                  {this.props.username}
+                </Typography>
+                <Typography variant="caption">{this.props.date}</Typography>
+              </div>
+              <Typography variant="body2">{this.props.content}</Typography>
             </div>
-            <Typography variant="body2">{this.props.content}</Typography>
           </div>
         </div>
       </ListItem>
